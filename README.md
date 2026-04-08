@@ -15,11 +15,11 @@ Hệ thống được thiết kế để số hóa quy trình quản lý tại c
 ---
 
 ## Công nghệ sử dụng
-**Database** : SQL Server Management Studio
-**Backend** : .NET Core (C#), Visual Studio
-**Frontend** : Angular, Visual Studio Code
-**Runtime** : Node.js 
-**Báo cáo** : [LaTeX (Overleaf)](https://www.overleaf.com/2898762932bqmgjsrtjgxd#aabc9a)
+1. **Database** : SQL Server Management Studio
+2. **Backend** : .NET Core (C#), Visual Studio
+3. **Frontend** : Angular, Visual Studio Code
+4. **Runtime** : Node.js 
+5. **Báo cáo** : [LaTeX (Overleaf)](https://www.overleaf.com/2898762932bqmgjsrtjgxd#aabc9a)
 
 ---
 
