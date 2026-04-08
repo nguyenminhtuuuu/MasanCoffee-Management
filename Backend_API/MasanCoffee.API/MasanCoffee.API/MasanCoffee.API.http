@@ -1,0 +1,6 @@
+@MasanCoffee.API_HostAddress = http://localhost:5249
+
+GET {{MasanCoffee.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
