@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NguyenLieuService } from './nguyen-lieu';
+import { NguyenLieu, NguyenLieuService } from './nguyen-lieu';
 
 @Component({
   selector: 'app-root',
@@ -16,26 +16,19 @@ import { NguyenLieuService } from './nguyen-lieu';
           <th>Số lượng tồn</th>
           <th>Đơn vị</th>
         </tr>
-        <tr *ngFor="let item of danhSach">
-          <td>{{ item.maHang }}</td>
-          <td>{{ item.tenHang }}</td>
-          <td [style.color]="item.soLuongTon < item.mucToiThieu ? 'red' : 'black'">
-            {{ item.soLuongTon }}
-          </td>
-          <td>{{ item.donViTinh }}</td>
+        <tr *ngFor="let item of (danhSach$ | async) ?? []">
+            <td>{{ item.maHang }}</td>
+            <td>{{ item.tenHang }}</td>
+            <td [style.color]="item.soLuongTon < item.mucToiThieu ? 'red' : 'black'">
+              {{ item.soLuongTon }}
+            </td>
+            <td>{{ item.donViTinh }}</td>
         </tr>
       </table>
     </div>
   `
 })
-export class AppComponent implements OnInit {
-  danhSach: any[] = [];
-
-  constructor(private nguyenLieuService: NguyenLieuService) {}
-
-  ngOnInit() {
-    this.nguyenLieuService.getDanhSach().subscribe(data => {
-      this.danhSach = data;
-    });
-  }
-}
+export class AppComponent {
+  private nguyenLieuService = inject(NguyenLieuService);
+  danhSach$ = this.nguyenLieuService.getDanhSach();
+}  
