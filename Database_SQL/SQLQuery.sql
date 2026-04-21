@@ -157,10 +157,6 @@ begin
 	from NguyenLieu nl
 	join inserted i on nl.MaHang = i.MaHang
 
-	update pn
-	set pn.TongTien = pn.TongTien + (i.SoLuong * i.DonGia)
-	from PhieuNhap pn
-	join inserted i on pn.MaPhieuNhap = i.MaPhieuNhap
 end
 go
 
@@ -192,3 +188,61 @@ VALUES
 (N'Syrup Vanila', 5, 2, N'Chai'),
 (N'Đá viên tinh khiết', 100, 20, N'Bao'),
 (N'Ly giấy Masan Coffee 12oz', 500, 100, N'Cái');
+
+INSERT INTO NhanVien
+(Ho, Ten, SoDienThoai, DiaChi, ChucVu, GioiTinh, TrangThai)
+VALUES
+(N'Nguyễn', N'An', '0901234567', N'TP.HCM', N'Quản lý', N'Nam', 1),
+(N'Trần', N'Nhi', '0902345678', N'Bình Dương', N'Nhân viên kho', N'Nữ', 1),
+(N'Lê', N'Minh', '0903456789', N'Đồng Nai', N'Thu ngân', N'Nam', 1),
+(N'Phạm', N'Hà', '0904567890', N'TP.HCM', N'Pha chế', N'Nữ', 1),
+(N'Hoàng', N'Long', '0905678901', N'Bình Phước', N'Nhân viên kho', N'Nam', 1),
+(N'Đặng', N'Thảo', '0906789012', N'Tây Ninh', N'Pha chế', N'Nữ', 1),
+(N'Võ', N'Khang', '0907890123', N'TP.HCM', N'Pha chế', N'Nam', 1),
+(N'Bùi', N'Lan', '0908901234', N'Bình Dương', N'Kế toán', N'Nữ', 1);
+
+INSERT INTO PhieuNhap (NgayNhap, MaNhanVien)
+VALUES
+('2025-10-10', 2),
+('2025-12-01', 2 ),
+('2026-01-14', 5),
+('2026-02-16', 5),
+('2026-03-18', 2);
+
+INSERT INTO ChiTietPhieuNhap (MaPhieuNhap, MaHang, SoLuong, DonGia)
+VALUES
+-- Phiếu nhập 1
+(1, 1, 20, 110000),   -- Cà phê Robusta
+(1, 3, 10, 25000),    -- Sữa đặc
+(1, 5, 15, 18000),    -- Đường trắng
+
+-- Phiếu nhập 2
+(2, 2, 12, 145000),   -- Cà phê Arabica
+(2, 6, 5, 320000),    -- Matcha
+(2, 8, 8, 95000),     -- Syrup Vanila
+
+-- Phiếu nhập 3
+(3, 4, 10, 32000),    -- Sữa tươi
+(3, 7, 6, 45000),     -- Trà túi lọc
+(3, 10, 200, 1500),   -- Ly giấy
+
+-- Phiếu nhập 4
+(4, 9, 30, 12000),    -- Đá viên
+(4, 5, 10, 18000),    -- Đường trắng
+(4, 3, 12, 25000),    -- Sữa đặc
+
+-- Phiếu nhập 5
+(5, 1, 15, 112000),   -- Robusta
+(5, 2, 10, 148000),   -- Arabica
+(5, 8, 5, 95000);     -- Syrup
+
+UPDATE pn
+SET TongTien = x.Tong
+FROM PhieuNhap pn
+JOIN (
+    SELECT MaPhieuNhap, SUM(SoLuong * DonGia) AS Tong
+    FROM ChiTietPhieuNhap
+    GROUP BY MaPhieuNhap
+) x ON pn.MaPhieuNhap = x.MaPhieuNhap;
+
+
