@@ -1,0 +1,36 @@
+<nav *ngIf="daDangNhap()" class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top mb-4">
+  <div class="container">
+    <a class="navbar-brand fw-bold text-primary" routerLink="/"> Massan Dashboard</a>
+    
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-3">
+        <li class="nav-item" *ngIf="kiemTraQuyen('QuanLyKho')">
+          <a class="nav-link fw-medium" routerLink="/kho-hang">Kho Hàng</a>
+        </li>
+        <li class="nav-item" *ngIf="kiemTraQuyen('QuanLyKho')">
+          <a class="nav-link fw-medium" routerLink="/nhap-kho">Nhập Kho</a>
+        </li>
+        <li class="nav-item" *ngIf="kiemTraQuyen('QuanLyKho')">
+          <a class="nav-link fw-medium" routerLink="/xuat-kho">Xuất Kho</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-medium" routerLink="/nhan-vien">Nhân Sự</a>
+        </li>
+        <li class="nav-item" *ngIf="kiemTraQuyen('QuanLyNhanVien')">
+          <a class="nav-link fw-medium" routerLink="/phan-cong">Xếp Ca</a>
+        </li>
+        <li class="nav-item" *ngIf="kiemTraQuyen('ThanhToanLuong')">
+          <a class="nav-link fw-medium" routerLink="/tinh-luong">Tính Lương</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-medium" routerLink="/thong-ke">Thống Kê</a>
+        </li>
+      </ul>
+      
+      <div class="d-flex align-items-center">
+        <span class="fw-bold me-3 text-secondary">Chào, {{ layTenNguoiDung() }}!</span>
+        <button class="btn btn-outline-danger btn-sm rounded-pill px-4" (click)="dangXuat()">Đăng Xuất</button>
+      </div>
+    </div>
+  </div>
+</nav>

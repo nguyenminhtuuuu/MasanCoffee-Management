@@ -3,11 +3,11 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": "7c3412ff-4a5d-435f-a9e0-e198b5312428"
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
-    "masan-coffee-app": {
+    "quan-ly-quan-cafe-Massan": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -25,7 +25,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.css"
+            ]
           },
           "configurations": {
             "production": {
@@ -55,10 +58,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "masan-coffee-app:build:production"
+              "buildTarget": "quan-ly-quan-cafe-Massan:build:production"
             },
             "development": {
-              "buildTarget": "masan-coffee-app:build:development"
+              "buildTarget": "quan-ly-quan-cafe-Massan:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -1,0 +1,37 @@
+<div class="container mt-4">
+  <h2 class="text-primary mb-3"> Bảng Thanh Toán Lương</h2>
+
+  <table class="table table-bordered table-striped table-hover shadow-sm">
+    <thead class="table-dark">
+      <tr>
+        <th>Mã NV</th>
+        <th>Họ Tên</th>
+        <th>Số giờ làm</th>
+        <th>Lương/Giờ</th>
+        <th>Tổng Lương</th>
+        <th>Trạng Thái</th>
+        <th>Thao Tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let nv of danhSachLuong">
+        <td>NV-0{{ nv.maNhanVien }}</td>
+        <td class="fw-bold">{{ nv.hoTen }}</td>
+        <td>{{ nv.soGioLam }}h</td>
+        <td>{{ nv.luongCoBan | number }}đ</td>
+        <td class="text-danger fw-bold">{{ nv.tongLuong | number }}đ</td>
+        <td>
+          <span class="badge bg-success" *ngIf="nv.daThanhToan">Đã chuyển</span>
+          <span class="badge bg-warning text-dark" *ngIf="!nv.daThanhToan">Chưa trả</span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-outline-success" 
+                  *ngIf="!nv.daThanhToan" 
+                  (click)="thanhToan(nv)">
+             Thanh toán
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

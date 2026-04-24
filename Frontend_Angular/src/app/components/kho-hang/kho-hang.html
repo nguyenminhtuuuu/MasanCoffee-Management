@@ -1,0 +1,40 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 class="text-primary fw-bold mb-0"> Danh Sách Tồn Kho</h2>
+  
+  <button class="btn btn-outline-primary rounded-pill px-4"> Tải báo cáo</button> 
+</div>
+
+<div class="table-responsive shadow-sm rounded-4 border">
+  <table class="table table-hover align-middle mb-0">
+    
+    <thead class="table-light text-center">
+      <tr>
+        <th class="py-3 text-secondary">Mã Hàng</th>
+        <th class="text-start py-3 text-secondary">Tên Hàng Hóa</th>
+        <th class="py-3 text-secondary">Số Lượng Tồn</th>
+        <th class="py-3 text-secondary">Đơn Vị</th>
+        <th class="py-3 text-secondary">Trạng Thái</th>
+      </tr>
+    </thead>
+    
+    <tbody class="text-center border-top-0">
+      <tr *ngFor="let hang of danhSachKho">
+        <td class="fw-medium text-muted">#{{ hang.maHang }}</td>
+        
+        <td class="text-start fw-bold">{{ hang.tenHang }}</td>
+        
+        <td [ngClass]="{'text-danger fw-bold fs-5': hang.soLuongTon < 10, 'fw-medium': hang.soLuongTon >= 10}">
+          {{ hang.soLuongTon }}
+        </td>
+        
+        <td>{{ hang.donViTinh }}</td>
+        
+        <td>
+          <span class="badge bg-danger rounded-pill px-3 py-2" *ngIf="hang.soLuongTon < 10">Sắp hết hàng</span>
+          <span class="badge bg-success rounded-pill px-3 py-2" *ngIf="hang.soLuongTon >= 10">Ổn định</span>
+        </td>
+      </tr>
+    </tbody>
+    
+  </table>
+</div>

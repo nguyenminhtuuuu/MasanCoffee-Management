@@ -1,0 +1,94 @@
+<div *ngIf="!hienThiForm">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-primary fw-bold mb-0">Danh Sách Nhân Sự</h2>
+    <button class="btn btn-primary rounded-pill px-4" *ngIf="kiemTraQuyen('QuanLyNhanVien')" (click)="moFormThem()"> 
+      Thêm Nhân Viên
+    </button>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded-4 border">
+    <table class="table table-hover align-middle mb-0 text-center">
+      <thead class="table-light">
+        <tr>
+          <th class="py-3 text-secondary">Mã NV</th>
+          <th class="text-start py-3 text-secondary">Họ và Tên</th>
+          <th class="py-3 text-secondary">Số điện thoại</th>
+          <th class="py-3 text-secondary">Chức Vụ</th>
+          <th class="py-3 text-secondary">Giới Tính</th>
+          <th class="py-3 text-secondary" *ngIf="kiemTraQuyen('QuanLyNhanVien')">Thao Tác</th>
+        </tr>
+      </thead>
+      <tbody class="border-top-0">
+        <tr *ngFor="let nv of danhSachNhanVien">
+          <td class="fw-medium text-muted">NV-0{{ nv.maNhanVien }}</td>
+          <td class="text-start fw-bold">{{ nv.ho }} {{ nv.ten }}</td>
+          <td>{{ nv.soDienThoai }}</td>
+          <td><span class="badge bg-info text-dark rounded-pill">{{ nv.chucVu }}</span></td>
+          <td>{{ nv.gioiTinh }}</td>
+          
+          <td *ngIf="kiemTraQuyen('QuanLyNhanVien')">
+            <button class="btn btn-sm btn-outline-warning me-2" (click)="moFormSua(nv)">Sửa</button>
+            <button class="btn btn-sm btn-outline-danger" (click)="xoaNhanVien(nv.maNhanVien)">Xóa</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div *ngIf="hienThiForm" class="card shadow-sm border-0 rounded-4">
+  <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+    <h3 class="text-primary fw-bold">{{ dangSua ? 'Cập Nhật Nhân Viên' : 'Thêm Nhân Viên Mới' }}</h3>
+  </div>
+  
+  <div class="card-body p-4">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Họ:</label>
+        <input type="text" class="form-control" [(ngModel)]="nhanVienHienTai.ho">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Tên:</label>
+        <input type="text" class="form-control" [(ngModel)]="nhanVienHienTai.ten">
+      </div>
+    </div>
+    
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Số điện thoại:</label>
+        <input type="text" class="form-control" [(ngModel)]="nhanVienHienTai.soDienThoai">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-bold">Chức vụ:</label>
+        <select class="form-select" [(ngModel)]="nhanVienHienTai.chucVu">
+          <option value="Sếp Tổng">Sếp Tổng</option>
+          <option value="Quản lý">Quản lý</option>
+          <option value="Thủ kho">Thủ kho</option>
+          <option value="Nhân sự">Nhân sự</option>
+          <option value="Kế toán">Kế toán</option>
+          <option value="Nhân viên">Nhân viên</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <label class="form-label fw-bold me-3">Giới tính:</label>
+        <div class="form-check form-check-inline mt-2">
+          <input class="form-check-input" type="radio" value="Nam" [(ngModel)]="nhanVienHienTai.gioiTinh" name="gioitinh">
+          <label class="form-check-label">Nam</label>
+        </div>
+        <div class="form-check form-check-inline mt-2">
+          <input class="form-check-input" type="radio" value="Nữ" [(ngModel)]="nhanVienHienTai.gioiTinh" name="gioitinh">
+          <label class="form-check-label">Nữ</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+      <button class="btn btn-secondary px-4 rounded-pill" (click)="huyBo()">Hủy</button>
+      <button class="btn btn-success px-4 rounded-pill fw-bold" (click)="luuNhanVien()"> Lưu Lại</button>
+    </div>
+  </div>
+</div>

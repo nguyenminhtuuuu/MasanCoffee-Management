@@ -1,0 +1,36 @@
+<div class="container mt-5">
+  <div class="row align-items-center bg-white rounded-4 shadow-sm overflow-hidden" style="min-height: 500px;">
+    
+    <div class="col-md-6 p-5 text-white h-100 d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); min-height: 500px;">
+      <h1 class="fw-bold mb-3"> Hệ thống Quản lý Massan</h1>
+      <p class="fs-5 mb-4">Chào mừng đến với cổng thông tin nội bộ. Vui lòng đăng nhập bằng tài khoản được cấp để truy cập vào các phân hệ nghiệp vụ.</p>
+      
+      <div class="mt-auto">
+        <small class="text-white-50">© 2026 Massan Coffee Shop Team</small>
+      </div>
+    </div>
+
+    <div class="col-md-6 p-5">
+      <h3 class="fw-bold text-dark mb-4">Đăng nhập hệ thống</h3>
+      
+      <div *ngIf="thongBaoLoi" class="alert alert-danger py-2">{{ thongBaoLoi }}</div>
+
+      <div class="mb-3">
+        <label class="form-label fw-medium">Tên đăng nhập</label>
+        <input type="text" class="form-control form-control-lg" [(ngModel)]="taiKhoan" placeholder="admin / thukho / nhansu / ketoan">
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label fw-medium">Mật khẩu</label>
+        <input type="password" class="form-control form-control-lg" [(ngModel)]="matKhau" placeholder="Nhập 123">
+      </div>
+
+      <button class="btn btn-primary btn-lg w-100 fw-bold rounded-pill" (click)="xuLyDangNhap()">Đăng Nhập</button>
+      
+      <div class="text-center mt-4">
+        <span class="text-muted">Gặp sự cố đăng nhập? Liên hệ IT (SĐT: 1900-xxxx)</span>
+      </div>
+    </div>
+
+  </div>
+</div>

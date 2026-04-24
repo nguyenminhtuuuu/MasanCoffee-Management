@@ -1,0 +1,27 @@
+import { Component } from '@angular/core';
+import { HangTonKho } from '../../models/kho-hang.model'; // Dẫn link khuôn đúc vào
+
+@Component({
+  selector: 'app-kho-hang',
+  templateUrl: './kho-hang.component.html',
+  styleUrls: ['./kho-hang.component.css']
+})
+export class KhoHangComponent {
+  // Đây chính là chép cục JSON vào đây làm Mock Data nè bồ
+  danhSachKho: HangTonKho[] = [
+    {
+      maHang: 1,
+      tenHang: "Hạt Cà phê Arabica",
+      soLuongTon: 5,   // Cố tình để 5 (nhỏ hơn 10) để lát test màu đỏ
+      mucToiThieu: 10,
+      donViTinh: "Kg"
+    },
+    {
+      maHang: 2,
+      tenHang: "Sữa đặc Ngôi Sao",
+      soLuongTon: 20,  // Đủ hàng
+      mucToiThieu: 5,
+      donViTinh: "Hộp"
+    }
+  ];
+}

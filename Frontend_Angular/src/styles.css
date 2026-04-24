@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+/* 1. Nhúng Font chữ Inter từ Google */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* 2. Phủ màu nền xám cực nhạt cho toàn web để làm nổi bật các khối nội dung trắng */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f6f8; 
+  color: #333;
+}
+
+/* 3. Bo góc nhẹ nhàng cho tất cả mọi thứ */
+input, select, button, .card {
+  border-radius: 8px !important;
+}
