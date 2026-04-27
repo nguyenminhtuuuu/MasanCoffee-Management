@@ -17,6 +17,11 @@ namespace MasanCoffee.API
         public DbSet<PhieuXuat> PhieuXuat { get; set; }
         public DbSet<ChiTietPhieuXuat> ChiTietPhieuXuat { get; set; }
 
+        public DbSet<TaiKhoan> TaiKhoan { get; set; }
+        public DbSet<VaiTro> VaiTro { get; set; }
+        public DbSet<ChucNang> ChucNang { get; set; }
+        public DbSet<VaiTro_ChucNang> VaiTro_ChucNang { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ChiTietPhieuNhap>()
@@ -34,6 +39,9 @@ namespace MasanCoffee.API
                 .HasOne(p => p.NhanVien)
                 .WithMany(n => n.PhieuXuats)
                 .HasForeignKey(p => p.MaNhanVien);
+
+            modelBuilder.Entity<VaiTro_ChucNang>()
+                .HasKey(vc => new { vc.MaVaiTro, vc.MaChucNang });
 
             base.OnModelCreating(modelBuilder);
         }
