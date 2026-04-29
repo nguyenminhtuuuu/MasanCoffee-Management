@@ -14,7 +14,7 @@ namespace MasanCoffee.API.Models
         public string ChucVu { get; set; } = string.Empty;
         public required string SoDienThoai { get; set; }
         public string GioiTinh {  get; set; } = string.Empty;
-        public int TrangThai { get; set; }
+        public bool TrangThai { get; set; }
 
         public virtual ICollection<PhieuNhap> PhieuNhaps { get; set; } = new List<PhieuNhap>();
         public virtual ICollection<PhieuXuat> PhieuXuats { get; set; } = new List<PhieuXuat>();

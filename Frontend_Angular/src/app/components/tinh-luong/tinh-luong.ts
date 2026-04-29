@@ -1,9 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BangLuong } from '../../models/bang-luong.model';
-
-// TODO: [BÀN GIAO - 1] Import Service
-// import { KeToanService } from '../services/ke-toan.service';
+import { KeToanService } from '../../services/ke-toan.service';
 
 @Component({
   selector: 'app-tinh-luong',
@@ -13,51 +11,57 @@ import { BangLuong } from '../../models/bang-luong.model';
   styleUrl: './tinh-luong.css'
 })
 export class TinhLuongComponent implements OnInit {
-  // TODO: [BÀN GIAO - 2] Gọi API lấy Bảng lương (Method: GET)
-  // Backend cần cung cấp API: GET /api/bang-luong?thang=04&nam=2026
-  
-  danhSachLuong: BangLuong[] = [
-    { maNhanVien: 1, hoTen: 'Bùi Anh', soGioLam: 120, luongCoBan: 25000, tongLuong: 0, daThanhToan: false },
-    { maNhanVien: 2, hoTen: 'Trần Thị Kho', soGioLam: 100, luongCoBan: 22000, tongLuong: 0, daThanhToan: true },
-    { maNhanVien: 3, hoTen: 'Nguyễn Văn Sếp', soGioLam: 150, luongCoBan: 35000, tongLuong: 0, daThanhToan: false }
-  ];
+  danhSachLuong: BangLuong[] = [];
+  thang = 5;
+  nam = 2024;
 
-  // constructor(private keToanService: KeToanService) {}
+  constructor(
+    private keToanService: KeToanService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
-    // Gọi API lấy danh sách ở đây. 
-
-    // TODO: [BÀN GIAO - 3] CẢNH BÁO BẢO MẬT & BUSINESS LOGIC (DÀNH CHO BACKEND)
-    // Cực kỳ quan trọng: FRONTEND KHÔNG ĐƯỢC PHÉP TÍNH LƯƠNG!
-    // Đoạn code vòng lặp tính (tongLuong = soGioLam * luongCoBan) ở dưới ĐÃ BỊ XÓA (hoặc chỉ dùng để mock tạm).
-    // Lý do: Nếu Frontend tự tính, user có thể F12 sửa luongCoBan thành 1 tỷ rồi gửi xuống Server.
-    // Backend/Data BẮT BUỘC phải thực hiện việc tính toán này dưới Database (dùng SQL SUM, JOIN với bảng Ca Làm và NhanVien) hoặc ở tầng Service của Backend, sau đó trả cục JSON đã có sẵn "tongLuong" lên cho Frontend chỉ việc in ra màn hình.
-    
-    // --- ĐOẠN MOCK DATA TẠM THỜI (SẼ BỎ KHI CÓ API) ---
-    this.danhSachLuong.forEach(nv => {
-      nv.tongLuong = nv.soGioLam * nv.luongCoBan;
+    this.keToanService.layBangLuong(this.thang, this.nam).subscribe({
+      next: (data) => {
+        console.log('Bang luong API tra ve:', data);
+        this.danhSachLuong = [...data];
+        console.log('So dong sau khi gan:', this.danhSachLuong.length);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Loi lay bang luong:', err);
+        alert('Không lấy được bảng lương');
+      }
     });
-    // --------------------------------------------------
   }
 
   thanhToan(nv: BangLuong) {
-    // TODO: [BÀN GIAO - 4] Gọi API Thanh toán (Method: POST hoặc PUT)
-    // Ghi chú cho Backend: Khi Frontend bấm nút này, Backend không chỉ đơn giản là đổi trạng thái daThanhToan = true.
-    // Backend cần ghi log lại 1 dòng vào bảng LICH_SU_GIAO_DICH (Ai là người duyệt chi? Trả lúc mấy giờ? Tổng tiền bao nhiêu?).
-    // Nhớ dùng Database Transaction (BEGIN TRAN... COMMIT TRAN) nhé!
+    if (nv.daThanhToan) {
+      alert('Bảng lương này đã được thanh toán trước đó');
+      return;
+    }
 
-    /* LUỒNG API THẬT:
-    this.keToanService.xacNhanThanhToan(nv.maNhanVien).subscribe({
-      next: () => {
-        nv.daThanhToan = true; // Chỉ đổi trạng thái UI khi Server báo OK (HTTP 200)
-        alert(`Đã chuyển khoản ${nv.tongLuong.toLocaleString()} VNĐ cho ${nv.hoTen}!`);
+    if (nv.tongLuong <= 0) {
+      alert('Không thể thanh toán bảng lương có tổng lương bằng 0');
+      return;
+    }
+
+    this.keToanService.thanhToanLuong(nv.maBangLuong, 'Trần Đăng Khoa').subscribe({
+      next: (res) => {
+        alert(res.thongBao);
+
+        if (res.thanhCong) {
+          nv.daThanhToan = true;
+        }
       },
-      error: (err) => alert('Lỗi thanh toán: ' + err.error.message)
+      error: (err) => {
+        console.error('Loi thanh toan:', err);
+        alert(err.error?.thongBao ?? 'Lỗi thanh toán');
+      }
     });
-    */
+  }
 
-    // --- CODE CHẠY TẠM ---
-    nv.daThanhToan = true;
-    alert(`Đã chuyển khoản ${nv.tongLuong.toLocaleString()} VNĐ cho ${nv.hoTen}!`);
+  coTheThanhToan(nv: BangLuong): boolean {
+    return !nv.daThanhToan && nv.tongLuong > 0;
   }
 }

@@ -1,8 +1,11 @@
 export interface BangLuong {
+  maBangLuong: number;
+  thangNam: string;
   maNhanVien: number;
-  hoTen: string;
-  soGioLam: number;
-  luongCoBan: number; // Lương 1 giờ
+  hoTenNhanVien: string;
+  chucVu: string;
+  tongGioLam: number;
+  heSoLuong: number;
   tongLuong: number;
-  daThanhToan: boolean; // Trạng thái: true là đã trả, false là đang nợ
+  daThanhToan: boolean;
 }

@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Backend_API",
+    "\\Backend_API\\MasanCoffee.API",
+    "\\Backend_API\\MasanCoffee.API\\MasanCoffee.API",
+    "\\Backend_API\\MasanCoffee.API\\MasanCoffee.API\\Services",
+    "\\Frontend_Angular",
+    "\\Frontend_Angular\\src\\app",
+    "\\Frontend_Angular\\src\\app\\components",
+    "\\Frontend_Angular\\src\\app\\components\\tinh-luong"
+  ],
+  "PreviewInSolutionExplorer": false
+}

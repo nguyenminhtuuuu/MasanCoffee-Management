@@ -68,13 +68,13 @@ create table PhanCongCa(
 )
 
 -- bang BangLuong
-create table BangLuong(
-	MaBangLuong int identity(1,1) primary key
-	, ThangNam date not null
-	, TongLuong decimal(18,2) default 0 check (TongLuong >= 0 )
-	, TongGioLam decimal(10,2) default 0 check (TongGioLam >= 0)
-	, MaNhanVien int foreign key references NhanVien(MaNhanVien)
-)
+--create table BangLuong(
+--	MaBangLuong int identity(1,1) primary key
+--	, ThangNam date not null
+--	, TongLuong decimal(18,2) default 0 check (TongLuong >= 0 )
+--	, TongGioLam decimal(10,2) default 0 check (TongGioLam >= 0)
+--	, MaNhanVien int foreign key references NhanVien(MaNhanVien)
+--)
 
 -- bang PhieuXuat
 create table PhieuXuat(
@@ -246,3 +246,245 @@ JOIN (
 ) x ON pn.MaPhieuNhap = x.MaPhieuNhap;
 
 
+-- =============================================================
+-- Roland Walker
+create table CauHinhLuong(
+    MaCauHinhLuong int identity(1,1) primary key,
+    ChucVu nvarchar(50) unique not null,
+    LuongCoBan decimal(18,2) not null check (LuongCoBan >= 0),
+    HeSoLuong decimal(5,2) not null check (HeSoLuong > 0)
+)
+go
+
+create table BangLuong(
+    MaBangLuong int identity(1,1) primary key,
+    ThangNam date not null,
+    TongLuong decimal(18,2) default 0 check (TongLuong >= 0),
+    TongGioLam decimal(10,2) default 0 check (TongGioLam >= 0),
+    HeSoLuong decimal(5,2) default 1 check (HeSoLuong > 0),
+    LuongCoBan decimal(18,2) default 0 check (LuongCoBan >= 0),
+    DaThanhToan bit default 0,
+    NgayThanhToan datetime2 null,
+    MaNhanVien int not null foreign key references NhanVien(MaNhanVien),
+    constraint UQ_BangLuong_Thang_NhanVien unique (ThangNam, MaNhanVien)
+)
+go
+
+
+create table ChiPhi(
+    MaChiPhi int identity(1,1) primary key,
+    NgayChiPhi date not null,
+    LoaiChiPhi nvarchar(50) not null,
+    NoiDung nvarchar(255) not null,
+    SoTien decimal(18,2) not null check (SoTien >= 0),
+    MaBangLuong int null foreign key references BangLuong(MaBangLuong)
+)
+go
+
+create table LichSuGiaoDichLuong(
+    MaGiaoDich int identity(1,1) primary key,
+    MaBangLuong int not null foreign key references BangLuong(MaBangLuong),
+    MaNhanVien int not null foreign key references NhanVien(MaNhanVien),
+    NguoiDuyet nvarchar(100) not null,
+    TongTien decimal(18,2) not null check (TongTien >= 0),
+    ThoiGianGiaoDich datetime2 not null default sysdatetime(),
+    GhiChu nvarchar(255)
+)
+go
+
+create or alter procedure sp_ChotBangLuongTheoThang
+    @Thang int,
+    @Nam int
+as
+begin
+    set nocount on;
+
+    begin try
+        begin transaction;
+
+        declare @ThangNam date = datefromparts(@Nam, @Thang, 1);
+
+        ;with DuLieuLuong as
+        (
+            select
+                nv.MaNhanVien,
+                @ThangNam as ThangNam,
+                cast(isnull(sum(pcc.SoGioLam), 0) as decimal(10,2)) as TongGioLam,
+                cast(isnull(ch.HeSoLuong, 1) as decimal(5,2)) as HeSoLuong,
+                cast(isnull(ch.LuongCoBan, 0) as decimal(18,2)) as LuongCoBan,
+                cast(isnull(sum(pcc.SoGioLam), 0) * isnull(ch.HeSoLuong, 1) * isnull(ch.LuongCoBan, 0) as decimal(18,2)) as TongLuong
+            from NhanVien nv
+            left join PhanCongCa pcc
+                on nv.MaNhanVien = pcc.MaNhanVien
+                and month(pcc.NgayLam) = @Thang
+                and year(pcc.NgayLam) = @Nam
+            left join CauHinhLuong ch
+                on nv.ChucVu = ch.ChucVu
+            where nv.TrangThai = 1
+            group by nv.MaNhanVien, ch.HeSoLuong, ch.LuongCoBan
+        )
+
+        merge BangLuong as target
+        using DuLieuLuong as source
+        on target.MaNhanVien = source.MaNhanVien
+           and target.ThangNam = source.ThangNam
+
+        when matched then
+            update set
+                target.TongGioLam = source.TongGioLam,
+                target.HeSoLuong = source.HeSoLuong,
+                target.LuongCoBan = source.LuongCoBan,
+                target.TongLuong = source.TongLuong
+
+        when not matched then
+            insert (ThangNam, TongLuong, TongGioLam, HeSoLuong, LuongCoBan, DaThanhToan, MaNhanVien)
+            values (source.ThangNam, source.TongLuong, source.TongGioLam, source.HeSoLuong, source.LuongCoBan, 0, source.MaNhanVien);
+
+        delete from ChiPhi
+        where MaBangLuong in (
+            select MaBangLuong
+            from BangLuong
+            where month(ThangNam) = @Thang and year(ThangNam) = @Nam
+        )
+        and LoaiChiPhi = N'Lương';
+
+        insert into ChiPhi (NgayChiPhi, LoaiChiPhi, NoiDung, SoTien, MaBangLuong)
+        select
+            eomonth(bl.ThangNam),
+            N'Lương',
+            N'Chi lương tháng ' + cast(@Thang as nvarchar(2)) + N'/' + cast(@Nam as nvarchar(4)),
+            bl.TongLuong,
+            bl.MaBangLuong
+        from BangLuong bl
+        where month(bl.ThangNam) = @Thang
+          and year(bl.ThangNam) = @Nam
+          and bl.DaThanhToan = 1
+          and bl.TongLuong > 0;
+
+        commit transaction;
+    end try
+    begin catch
+        if @@trancount > 0
+            rollback transaction;
+
+        throw;
+    end catch
+end
+go
+
+--exec sp_ChotBangLuongTheoThang @Thang = 5, @Nam = 2024
+
+--select * from BangLuong
+--select * from ChiPhi
+
+
+-- ================================================================
+insert into CauHinhLuong (ChucVu, LuongCoBan, HeSoLuong)
+values
+    (N'Quản lý', 35000, 1.80),
+    (N'Nhân viên kho', 28000, 1.40),
+    (N'Thu ngân', 22000, 1.20),
+    (N'Pha chế', 23000, 1.10),
+    (N'Kế toán', 32000, 1.60)
+
+
+select * from CauHinhLuong
+
+--select * from CaLam
+
+--insert into CaLam (GioBatDau, GioKetThuc)
+--values
+--    ('08:00:00', '12:00:00'),
+--    ('13:00:00', '17:00:00'),
+--    ('18:00:00', '22:00:00')
+
+
+-- ====================================================================
+insert into PhanCongCa (NgayLam, MaNhanVien, MaCa)
+values
+    ('2024-05-02', 2, 1),
+    ('2024-05-03', 2, 2),
+    ('2024-05-04', 4, 1),
+    ('2024-05-05', 5, 2),
+    ('2024-05-06', 8, 1)
+
+select * from PhanCongCa
+where month(NgayLam) = 5 and year(NgayLam) = 2024
+
+
+select * from BangLuong where MaBangLuong = 2
+select * from LichSuGiaoDichLuong where MaBangLuong = 2
+
+
+-- ================================================================================================
+create table HoaDonBanHang(
+    MaHoaDon int identity(1,1) primary key,
+    NgayLap date not null,
+    TongTien decimal(18,2) not null check (TongTien >= 0),
+    GhiChu nvarchar(255)
+)
+go
+
+
+insert into HoaDonBanHang (NgayLap, TongTien, GhiChu)
+values
+    ('2024-01-31', 45000000, N'Doanh thu tháng 1'),
+    ('2024-02-29', 52000000, N'Doanh thu tháng 2'),
+    ('2024-03-31', 48000000, N'Doanh thu tháng 3'),
+    ('2024-04-30', 60000000, N'Doanh thu tháng 4'),
+    ('2024-05-31', 55000000, N'Doanh thu tháng 5')
+go
+
+create or alter view vw_BaoCaoDoanhThuThang
+as
+select
+    year(NgayLap) as Nam,
+    month(NgayLap) as Thang,
+    sum(TongTien) as TongDoanhThu
+from HoaDonBanHang
+group by year(NgayLap), month(NgayLap)
+go
+
+create or alter view vw_BaoCaoChiPhiThang
+as
+select
+    Nam,
+    Thang,
+    sum(SoTien) as TongChiPhi
+from
+(
+    select
+        year(NgayNhap) as Nam,
+        month(NgayNhap) as Thang,
+        TongTien as SoTien
+    from PhieuNhap
+
+    union all
+
+    select
+        year(NgayChiPhi) as Nam,
+        month(NgayChiPhi) as Thang,
+        SoTien
+    from ChiPhi
+) as DuLieuChiPhi
+group by Nam, Thang
+go
+
+
+--select * from vw_BaoCaoDoanhThuThang
+--order by Nam, Thang
+
+--select * from vw_BaoCaoChiPhiThang
+--order by Nam, Thang
+
+
+--select * from BangLuong
+--select * from LichSuGiaoDichLuong
+
+--update BangLuong
+--set DaThanhToan = 0,
+--    NgayThanhToan = null
+--where MaBangLuong = 1
+
+--delete from LichSuGiaoDichLuong
+--where MaBangLuong = 1
