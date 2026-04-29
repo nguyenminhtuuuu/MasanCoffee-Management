@@ -236,6 +236,18 @@ VALUES
 (5, 2, 10, 148000),   -- Arabica
 (5, 8, 5, 95000);     -- Syrup
 
+INSERT INTO VaiTro (TenVaiTro)
+VALUES 
+(N'Admin'),
+(N'Quản Lý'),
+(N'Nhân Viên'),
+(N'Thu Ngân');
+
+INSERT INTO TaiKhoan
+(TenDangNhap, MatKhau, TrangThai, MaNhanVien, MaVaiTro)
+VALUES
+('admin', '123', 1, 1, 1)
+
 UPDATE pn
 SET TongTien = x.Tong
 FROM PhieuNhap pn

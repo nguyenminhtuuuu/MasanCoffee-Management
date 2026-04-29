@@ -1,6 +1,5 @@
-﻿using MasanCoffee.API.Models;   
+﻿using MasanCoffee.API.Models;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace MasanCoffee.API
 {
@@ -25,14 +24,18 @@ namespace MasanCoffee.API
         public DbSet<BaoCaoDoanhThuThang> BaoCaoDoanhThuThang { get; set; }
         public DbSet<BaoCaoChiPhiThang> BaoCaoChiPhiThang { get; set; }
 
+        public DbSet<TaiKhoan> TaiKhoan { get; set; }
+        public DbSet<VaiTro> VaiTro { get; set; }
+        public DbSet<ChucNang> ChucNang { get; set; }
+        public DbSet<VaiTro_ChucNang> VaiTro_ChucNang { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ChiTietPhieuNhap>()
-                .HasKey(x => new { x.MaPhieuNhap, x.MaHang }); // xu ly Composite Key
+                .HasKey(x => new { x.MaPhieuNhap, x.MaHang });
 
             modelBuilder.Entity<ChiTietPhieuXuat>()
-                .HasKey(x => new { x.MaPhieuXuat, x.MaHang }); // xu ly Composite Key
+                .HasKey(x => new { x.MaPhieuXuat, x.MaHang });
 
             modelBuilder.Entity<PhieuNhap>()
                 .HasOne(p => p.NhanVien)
@@ -58,8 +61,10 @@ namespace MasanCoffee.API
                 .HasNoKey()
                 .ToView("vw_BaoCaoChiPhiThang");
 
+            modelBuilder.Entity<VaiTro_ChucNang>()
+                .HasKey(vc => new { vc.MaVaiTro, vc.MaChucNang });
+
             base.OnModelCreating(modelBuilder);
         }
-        
     }
 }
