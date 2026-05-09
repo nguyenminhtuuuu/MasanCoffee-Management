@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NhanVien } from '../../models/nhan-vien.model';
 
 // TODO: [BÀN GIAO - 1] Import Service
-// import { NhanSuService } from '../services/nhan-su.service';
+import { NhanSuService } from '../../services/nhan-su.service';
 
 @Component({
   selector: 'app-them-nhan-vien',
@@ -14,35 +14,44 @@ import { NhanVien } from '../../models/nhan-vien.model';
   styleUrl: './them-nhan-vien.css'
 })
 export class ThemNhanVienComponent implements OnInit {
-  // TODO: [BÀN GIAO - 2] Gọi API lấy danh sách (Method: GET)
-  // Backend cung cấp API GET /api/nhan-vien.
-  // danhSachNhanVien: NhanVien[] = [];
-
-  // 1. Dữ liệu giả lập
-  danhSachNhanVien: NhanVien[] = [
-    { maNhanVien: 1, ho: 'Nguyễn Văn', ten: 'Sếp', soDienThoai: '0901234567', diaChi: '', chucVu: 'Sếp Tổng', gioiTinh: 'Nam', trangThai: true },
-    { maNhanVien: 2, ho: 'Trần Thị', ten: 'Kho', soDienThoai: '0912345678', diaChi: '', chucVu: 'Thủ kho', gioiTinh: 'Nữ', trangThai: true },
-    { maNhanVien: 3, ho: 'Bùi', ten: 'Anh', soDienThoai: '0987654321', diaChi: '', chucVu: 'Nhân sự', gioiTinh: 'Nữ', trangThai: true }
-  ];
+  // Danh sách hiển thị trên bảng
+  danhSachNhanVien: NhanVien[] = [];
 
   // Biến điều khiển màn hình (false là hiện Bảng, true là hiện Form)
   hienThiForm = false;
   dangSua = false; // Phân biệt đang là Thêm Mới hay Cập Nhật
   
   // Cái giỏ trống để hứng dữ liệu trên Form
-  nhanVienHienTai: NhanVien = { ho: '', ten: '', soDienThoai: '', diaChi: '', chucVu: 'Nhân viên', gioiTinh: 'Nam', trangThai: true };
+  nhanVienHienTai: NhanVien = { 
+    ho: '', 
+    ten: '', 
+    soDienThoai: '', 
+    diaChi: '', 
+    chucVu: 'Nhân viên', 
+    gioiTinh: 'Nam', 
+    trangThai: true 
+  };
 
-  // constructor(private nhanSuService: NhanSuService) {}
+  constructor(private nhanSuService: NhanSuService) {}
 
   ngOnInit() {
-    // Gọi this.nhanSuService.getDanhSachNhanVien().subscribe(...) ở đây để load dữ liệu từ Database lên.
+    // Tự động lấy dữ liệu khi vừa mở trang
+    this.loadLaiDanhSach();
   }
 
-  // CHIÊU BẢO MẬT: Kiểm tra xem thẻ từ có quyền này không
+  // Hàm bổ trợ: Lấy dữ liệu mới nhất từ SQL Server
+  loadLaiDanhSach() {
+    this.nhanSuService.getDanhSachNhanVien().subscribe({
+      next: (res: any) => {
+        this.danhSachNhanVien = res;
+        console.log('Dữ liệu từ SQL đã cập nhật:', res);
+      },
+      error: (err) => console.error('Lỗi tải danh sách:', err)
+    });
+  }
+
+  // CHIÊU BẢO MẬT: Kiểm tra quyền truy cập
   kiemTraQuyen(quyenCanCheck: string): boolean {
-    // TODO: [BÀN GIAO - 3] Nhắc nhở Backend về phân quyền
-    // Ghi chú cho Backend: Hàm này ở Frontend chỉ dùng để ẨN/HIỆN các nút (như nút Thêm, Xóa, Sửa) cho giao diện sạch sẽ.
-    // Backend BẮT BUỘC phải check quyền tương ứng (Role: QuanLyNhanVien) ở mọi API POST, PUT, DELETE để tránh bị gọi API chui.
     const chuoiQuyen = localStorage.getItem('quyenTruyCap');
     if (!chuoiQuyen) return false;
     return JSON.parse(chuoiQuyen).includes(quyenCanCheck);
@@ -51,54 +60,69 @@ export class ThemNhanVienComponent implements OnInit {
   // Mở form để Thêm mới
   moFormThem() {
     this.dangSua = false;
-    this.nhanVienHienTai = { ho: '', ten: '', soDienThoai: '', diaChi: '', chucVu: 'Nhân viên', gioiTinh: 'Nam', trangThai: true };
+    this.nhanVienHienTai = { 
+      ho: '', 
+      ten: '', 
+      soDienThoai: '', 
+      diaChi: '', 
+      chucVu: 'Nhân viên', 
+      gioiTinh: 'Nam', 
+      trangThai: true 
+    };
     this.hienThiForm = true;
   }
 
   // Mở form để Sửa
   moFormSua(nv: NhanVien) {
     this.dangSua = true;
-    // Dấu ... giúp tạo ra một bản copy, để lúc mình gõ phím trên form, cái Bảng ở ngoài không bị thay đổi theo liền
     this.nhanVienHienTai = { ...nv }; 
     this.hienThiForm = true;
   }
 
-  // Xóa nhân viên
+  // Xóa nhân viên (Sử dụng Soft Delete - Cập nhật trạng thái)
   xoaNhanVien(maNV: number | undefined) {
     if (confirm('Bồ có chắc chắn muốn cho người này nghỉ việc không?')) {
       // TODO: [BÀN GIAO - 4] LƯU Ý CHO DATA & BACKEND - SOFT DELETE
-      // Ghi chú cực kỳ quan trọng: TUYỆT ĐỐI KHÔNG DÙNG LỆNH "DELETE FROM NhanVien" trong Database.
-      // Nếu xóa mất nhân viên, các phiếu nhập kho hoặc lịch phân ca cũ liên kết với mã nhân viên này sẽ bị lỗi (hỏng khóa ngoại - Foreign Key constraint), hoặc làm sai lệch dữ liệu thống kê sau này.
-      // Giải pháp: Backend viết API (vd: PUT /api/nhan-vien/{id}/nghi-viec) để cập nhật trường "trangThai = false".
-      // Frontend sau đó sẽ gọi API load lại danh sách.
-      
-      /* Luồng thật:
-      this.nhanSuService.xoaNhanVien(maNV).subscribe(() => this.loadLaiDanhSach());
-      */
-
-      // Code tạm:
-      this.danhSachNhanVien = this.danhSachNhanVien.filter(n => n.maNhanVien !== maNV);
+      this.nhanSuService.xoaNhanVien(maNV).subscribe({
+        next: () => {
+          alert('✅ Đã cập nhật trạng thái nghỉ việc thành công!');
+          this.loadLaiDanhSach(); // Tải lại bảng ngay lập tức
+        },
+        error: (err:any) => {
+          alert('❌ Lỗi: ' + (err.error?.thongBao || 'Không thể xóa'));
+        }
+      });
     }
   }
 
-  // Bấm nút Lưu
+  // Bấm nút Lưu (Xử lý cả Thêm và Sửa)
   luuNhanVien() {
     if (this.dangSua) {
       // TODO: [BÀN GIAO - 5] Gọi API Cập nhật (Method: PUT)
-      // Gửi cục this.nhanVienHienTai xuống API: PUT /api/nhan-vien/{maNV}
-      
-      const index = this.danhSachNhanVien.findIndex(n => n.maNhanVien === this.nhanVienHienTai.maNhanVien);
-      if (index !== -1) this.danhSachNhanVien[index] = { ...this.nhanVienHienTai };
+      this.nhanSuService.capNhatNhanVien(this.nhanVienHienTai.maNhanVien, this.nhanVienHienTai).subscribe({
+        next: () => {
+          alert('✅ Cập nhật thông tin thành công!');
+          this.loadLaiDanhSach();
+          this.hienThiForm = false;
+        },
+        error: (err) => alert('❌ Lỗi cập nhật: ' + (err.error?.thongBao || 'Lỗi hệ thống'))
+      });
+
     } else {
       // TODO: [BÀN GIAO - 6] Gọi API Thêm mới (Method: POST)
-      // Ghi chú cho Backend: Khi Frontend gửi dữ liệu Thêm mới, sẽ KHÔNG CÓ trường maNhanVien.
-      // Database (SQL Server) sẽ tự động sinh mã (Identity / Auto Increment). Sau khi Insert xong, Backend trả về object có chứa cái mã mới đó cho Frontend.
-      
-      this.nhanVienHienTai.maNhanVien = new Date().getTime(); // Mượn tạm số mili-giây làm mã nhân viên
-      this.danhSachNhanVien.push({ ...this.nhanVienHienTai });
+      // Tạo bản sao và xóa MaNhanVien để SQL Server tự sinh mã (Identity)
+      const dataMoi = { ...this.nhanVienHienTai };
+      delete (dataMoi as any).maNhanVien;
+
+      this.nhanSuService.themNhanVien(dataMoi).subscribe({
+        next: (res) => {
+          alert(`✅ Đã lưu nhân viên ${res.ho} ${res.ten} vào Database!`);
+          this.loadLaiDanhSach();
+          this.hienThiForm = false;
+        },
+        error: (err) => alert('❌ Lỗi lưu mới: ' + (err.error?.thongBao || 'Lỗi hệ thống'))
+      });
     }
-    // Lưu xong thì tắt form, quay lại Bảng
-    this.hienThiForm = false; 
   }
 
   // Bấm nút Hủy
