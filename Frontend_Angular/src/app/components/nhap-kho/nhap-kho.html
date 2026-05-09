@@ -1,19 +1,32 @@
 <h2 class="text-primary mb-4"> Lập Phiếu Nhập Kho</h2>
 
 <div class="row mb-3">
+  
   <div class="col-md-3">
     <label class="form-label fw-bold">Ngày nhập:</label>
-    <input type="date" class="form-control" [(ngModel)]="phieuNhap.ngayNhap" />
+    <input
+      type="date"
+      class="form-control"
+      [(ngModel)]="phieuNhap.ngayNhap" />
   </div>
+
   <div class="col-md-3">
-    <label class="form-label fw-bold">Nhân viên lập:</label>
-    <input type="text" class="form-control" [(ngModel)]="phieuNhap.nhanVienLap" disabled />
+    <label class="form-label fw-bold">Mã nhân viên:</label>
+    <input
+      type="number"
+      class="form-control"
+      [(ngModel)]="phieuNhap.maNhanVien"
+      placeholder="Nhập mã nhân viên" />
   </div>
+
 </div>
 
 <div class="card shadow-sm border-0 mb-4">
+
   <div class="card-body p-0">
+
     <table class="table table-hover mb-0">
+
       <thead class="table-light">
         <tr>
           <th style="width: 40%">Tên Hàng Hóa</th>
@@ -22,35 +35,94 @@
           <th style="width: 15%">Thao tác</th>
         </tr>
       </thead>
+
       <tbody>
+
         <tr *ngFor="let monHang of phieuNhap.danhSachHang; let i = index">
+
           <td>
-            <select class="form-select" [(ngModel)]="monHang.maHang">
-              <option value="0" disabled>-- Chọn món hàng --</option>
-              <option *ngFor="let h of danhSachHangHoa" [value]="h.maHang">{{ h.tenHang }}</option>
+            <select
+              class="form-select"
+              [(ngModel)]="monHang.maHang">
+
+              <option [ngValue]="0" disabled>
+                -- Chọn món hàng --
+              </option>
+
+              <option
+                *ngFor="let h of danhSachHangHoa"
+                [ngValue]="h.maHang">
+
+                {{ h.tenHang }}
+
+              </option>
+
             </select>
           </td>
+
           <td>
-            <input type="number" class="form-control" [(ngModel)]="monHang.soLuong" (ngModelChange)="tinhTongTien()" min="1" />
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="monHang.soLuong"
+              (ngModelChange)="tinhTongTien()"
+              min="1" />
           </td>
+
           <td>
-            <input type="number" class="form-control" [(ngModel)]="monHang.donGia" (ngModelChange)="tinhTongTien()" min="0" />
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="monHang.donGia"
+              (ngModelChange)="tinhTongTien()"
+              min="0" />
           </td>
+
           <td>
-            <button *ngIf="phieuNhap.danhSachHang.length > 1" class="btn btn-sm btn-outline-danger mt-1" (click)="xoaDong(i)">
-               Xóa
+            <button
+              *ngIf="phieuNhap.danhSachHang.length > 1"
+              class="btn btn-sm btn-outline-danger mt-1"
+              (click)="xoaDong(i)">
+
+              Xóa
+
             </button>
           </td>
+
         </tr>
+
       </tbody>
+
     </table>
+
   </div>
+
   <div class="card-footer bg-white text-center py-3 border-top-0">
-    <button class="btn btn-outline-primary rounded-pill px-4" (click)="themDongMoi()"> Thêm Hàng</button>
+
+    <button
+      class="btn btn-outline-primary rounded-pill px-4"
+      (click)="themDongMoi()">
+
+      Thêm Hàng
+
+    </button>
+
   </div>
+
 </div>
 
 <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 shadow-sm">
-  <h4 class="mb-0 text-danger fw-bold">Tổng tiền: {{ phieuNhap.tongTien | number }} VNĐ</h4>
-  <button class="btn btn-success px-5 py-2 fw-bold" (click)="luuPhieu()"> LƯU PHIẾU NHẬP</button>
+
+  <h4 class="mb-0 text-danger fw-bold">
+    Tổng tiền: {{ phieuNhap.tongTien | number }} VNĐ
+  </h4>
+
+  <button
+    class="btn btn-success px-5 py-2 fw-bold"
+    (click)="luuPhieu()">
+
+    LƯU PHIẾU NHẬP
+
+  </button>
+
 </div>

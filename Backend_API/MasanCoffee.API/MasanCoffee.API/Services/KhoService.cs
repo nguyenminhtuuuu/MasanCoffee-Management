@@ -16,12 +16,14 @@ namespace MasanCoffee.API.Services
 
         public async Task<object> LayTonKho()
         {
-            var ds = await _context.NguyenLieu.Select(x => new TonKhoDto
+            var ds = await _context.NguyenLieu.AsNoTracking().Select(x => new TonKhoDto
             {
                 MaHang = x.MaHang,
                 TenHang = x.TenHang,
                 SoLuongTon = x.SoLuongTon,
-                CanhBao = (x.SoLuongTon < x.MucToiThieu) ? "(Sắp) hết hàng" : "Đủ hàng"
+                DonViTinh = x.DonViTinh,
+                MucToiThieu = x.MucToiThieu,
+                TrangThai = (x.SoLuongTon < x.MucToiThieu) ? "(Sắp) hết hàng" : "Đủ hàng"
             }).ToListAsync();
 
             return new
@@ -131,7 +133,6 @@ namespace MasanCoffee.API.Services
                         MaHang = x.MaHang,
                         SoLuong = x.SoLuong
                     };
-                    _context.ChiTietPhieuXuat.Add(ct_xuat);
 
                     var hang = await _context.NguyenLieu.FirstOrDefaultAsync(y => y.MaHang == x.MaHang);
 
@@ -144,6 +145,8 @@ namespace MasanCoffee.API.Services
                     }
 
                     hang.SoLuongTon -= x.SoLuong;
+
+                    _context.ChiTietPhieuXuat.Add(ct_xuat);
                 }
                 await _context.SaveChangesAsync(); 
                 await transaction.CommitAsync();
