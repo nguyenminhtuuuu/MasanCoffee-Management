@@ -1,17 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { KhoHangComponent } from './kho-hang';
 
-import { KhoHang } from './kho-hang';
-
-describe('KhoHang', () => {
-  let component: KhoHang;
-  let fixture: ComponentFixture<KhoHang>;
+describe('KhoHangComponent', () => {
+  let component: KhoHangComponent;
+  let fixture: ComponentFixture<KhoHangComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [KhoHang],
+      imports: [KhoHangComponent], // standalone component
     }).compileComponents();
 
-    fixture = TestBed.createComponent(KhoHang);
+    fixture = TestBed.createComponent(KhoHangComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

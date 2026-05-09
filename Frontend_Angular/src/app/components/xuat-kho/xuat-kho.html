@@ -1,27 +1,95 @@
 <h2>Tạo Phiếu Xuất Kho</h2>
 
-<div *ngIf="thongBaoLoi" style="background-color: #ffe6e6; color: red; padding: 10px; border: 1px solid red; margin-bottom: 15px; border-radius: 5px;">
-  <strong>Cảnh báo từ SQL:</strong> {{ thongBaoLoi }}
+<!-- THÔNG BÁO LỖI -->
+<div
+  *ngIf="thongBaoLoi"
+  style="
+    background-color: #ffe6e6;
+    color: red;
+    padding: 10px;
+    border: 1px solid red;
+    margin-bottom: 15px;
+    border-radius: 5px;">
+
+  <strong>Cảnh báo:</strong>
+  {{ thongBaoLoi }}
+
 </div>
 
-<div *ngIf="thongBaoThanhCong" style="background-color: #e6ffe6; color: green; padding: 10px; border: 1px solid green; margin-bottom: 15px; border-radius: 5px;">
+<!-- THÔNG BÁO THÀNH CÔNG -->
+<div
+  *ngIf="thongBaoThanhCong"
+  style="
+    background-color: #e6ffe6;
+    color: green;
+    padding: 10px;
+    border: 1px solid green;
+    margin-bottom: 15px;
+    border-radius: 5px;">
+
   ✅ {{ thongBaoThanhCong }}
+
 </div>
 
+<!-- MÃ NHÂN VIÊN -->
 <div style="margin-bottom: 10px;">
+
+  <label>Mã nhân viên: </label>
+
+  <input
+    type="number"
+    [(ngModel)]="phieuXuat.maNhanVien"
+    placeholder="Nhập mã nhân viên" />
+
+</div>
+
+<!-- CHỌN HÀNG -->
+<div style="margin-bottom: 10px;">
+
   <label>Chọn mặt hàng: </label>
+
   <select [(ngModel)]="phieuXuat.maHang">
-    <option *ngFor="let hang of khoHienTai" [value]="hang.maHang">
-      {{ hang.tenHang }} (Tồn hiện tại: {{ hang.soLuongTon }})
+
+    <option [value]="0">
+      -- Chọn hàng hóa --
     </option>
+
+    <option
+      *ngFor="let hang of khoHienTai"
+      [value]="hang.maHang">
+
+      {{ hang.tenHang }}
+      (Tồn hiện tại:
+      {{ hang.soLuongTon }})
+
+    </option>
+
   </select>
+
 </div>
 
+<!-- SỐ LƯỢNG -->
 <div style="margin-bottom: 10px;">
+
   <label>Số lượng cần xuất: </label>
-  <input type="number" [(ngModel)]="phieuXuat.soLuong" />
+
+  <input
+    type="number"
+    [(ngModel)]="phieuXuat.soLuong" />
+
 </div>
 
-<button (click)="xuLyXuatKho()" style="background-color: #ff4d4d; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">
+<!-- BUTTON -->
+<button
+  (click)="xuLyXuatKho()"
+  style="
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;">
+
   Thực Hiện Xuất Kho
+
 </button>
