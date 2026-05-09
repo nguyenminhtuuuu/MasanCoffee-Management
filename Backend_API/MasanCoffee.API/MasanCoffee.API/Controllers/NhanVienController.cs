@@ -15,19 +15,20 @@ namespace MasanCoffee.API.Controllers
             _context = context;
         }
 
-        // API 1: Lấy toàn bộ danh sách nhân viên
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NhanVien>>> GetNhanViens()
         {
             return await _context.NhanVien.OrderByDescending(x => x.MaNhanVien).ToListAsync();
         }
 
-        // API 2: Thêm một nhân viên mới
         [HttpPost]
         public async Task<ActionResult<NhanVien>> PostNhanVien(NhanVien nhanVien)
         {
             try
             {
+
+                nhanVien.TrangThai = true;
+
                 _context.NhanVien.Add(nhanVien);
                 await _context.SaveChangesAsync();
                 return Ok(new { thongBao = "Thêm nhân viên thành công!" });
@@ -38,31 +39,28 @@ namespace MasanCoffee.API.Controllers
             }
         }
 
-        // API 3: Xóa nhân viên theo mã
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNhanVien(int id)
+        [HttpPut("{id}/nghi-viec")]
+        public async Task<IActionResult> ChoNghiViec(int id)
         {
             var nv = await _context.NhanVien.FindAsync(id);
             if (nv == null) return NotFound(new { thongBao = "Không tìm thấy nhân viên!" });
 
+            nv.TrangThai = false;
+
             try
             {
-                _context.NhanVien.Remove(nv);
                 await _context.SaveChangesAsync();
-                return Ok(new { thongBao = "Đã xóa nhân viên thành công!" });
+                return Ok(new { thongBao = "Đã cập nhật trạng thái nhân viên thành Nghỉ việc!" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-               
-                return BadRequest(new { thongBao = "Không thể xóa nhân viên này vì đã có lịch làm việc hoặc dữ liệu liên quan!" });
+                return BadRequest(new { thongBao = "Lỗi khi cập nhật trạng thái: " + (ex.InnerException?.Message ?? ex.Message) });
             }
         }
 
-        // API 4: Cập nhật thông tin nhân viên
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNhanVien(int id, NhanVien nhanVien)
         {
-            
             if (id != nhanVien.MaNhanVien)
             {
                 return BadRequest(new { thongBao = "ID nhân viên không khớp!" });

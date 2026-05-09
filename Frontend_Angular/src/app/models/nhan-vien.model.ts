@@ -1,5 +1,5 @@
 export interface NhanVien {
-  maNhanVien?: number; // Có dấu ? nghĩa là lúc mới tạo chưa có mã cũng được (vì DB tự tăng)
+  maNhanVien?: number; 
   ho: string;
   ten: string;
   soDienThoai: string;

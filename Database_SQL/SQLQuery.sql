@@ -4,7 +4,6 @@ go
 use MasanCoffeeDB
 go
 
-
 -- bang NhanVien
 create table NhanVien(
 	MaNhanVien int identity(1,1) primary key 
@@ -24,6 +23,13 @@ create table VaiTro(
 	, TenVaiTro nvarchar(50) unique not null
 )
 
+INSERT INTO VaiTro (TenVaiTro)
+VALUES 
+(N'Admin'),
+(N'Quản lý'),
+(N'Nhân viên kho'),
+(N'Kế toán');
+
 -- bang TaiKhoan
 create table TaiKhoan(
 	TenDangNhap varchar(50) primary key
@@ -39,7 +45,14 @@ create table ChucNang(
 	MaChucNang int identity(1,1) primary key
 	, TenChucNang nvarchar(255) unique not null
 )
-
+INSERT INTO ChucNang (TenChucNang) VALUES 
+('QuanLyKho'),
+('NhapKho'),
+('XuatKho'),
+('PhanCongCa'),
+('QuanLyNhanVien'),
+('ThanhToanLuong'),
+('XemThongKe');
 --bang NguyenLieu
 create table NguyenLieu(
 	MaHang int identity(1,1) primary key
@@ -56,6 +69,12 @@ create table CaLam(
 	, GioKetThuc time not null
 	, constraint check_GioCaLam check (GioBatDau < GioKetThuc)
 )
+
+insert into CaLam (GioBatDau, GioKetThuc)
+values
+	('08:00:00', '12:00:00'),
+    ('13:00:00', '17:00:00'),
+    ('18:00:00', '22:00:00')
 
 -- bang PhanCongCa
 create table PhanCongCa(
@@ -118,7 +137,6 @@ create table VaiTro_ChucNang(
 )
 
 go
-
 -- trigger khi xuat nguyen lieu
 create trigger trg_ChiTietPhieuXuat_Insert
 on ChiTietPhieuXuat
@@ -144,8 +162,6 @@ begin
 	join inserted i on nl.MaHang = i.MaHang
 end
 go
-
-
 -- trigger tu dong hoa nhap kho va tinh tien
 create trigger trg_ChiTietPhieuNhap_Insert
 on ChiTietPhieuNhap
@@ -159,7 +175,6 @@ begin
 
 end
 go
-
 -- trigger tinh so gio lam viec
 create trigger trg_PhanCongCa_TinhGioLam
 on PhanCongCa
@@ -174,8 +189,7 @@ begin
 end
 go
 
-
--- chen du lieu
+---------------------------CHEN DU LIEU ---------------------------------------------
 INSERT INTO NguyenLieu (TenHang, SoLuongTon, MucToiThieu, DonViTinh)
 VALUES 
 (N'Cà phê Robusta hạt', 50, 10, N'Kg'),
@@ -192,14 +206,14 @@ VALUES
 INSERT INTO NhanVien
 (Ho, Ten, SoDienThoai, DiaChi, ChucVu, GioiTinh, TrangThai)
 VALUES
-(N'Nguyễn', N'An', '0901234567', N'TP.HCM', N'Quản lý', N'Nam', 1),
-(N'Trần', N'Nhi', '0902345678', N'Bình Dương', N'Nhân viên kho', N'Nữ', 1),
-(N'Lê', N'Minh', '0903456789', N'Đồng Nai', N'Thu ngân', N'Nam', 1),
-(N'Phạm', N'Hà', '0904567890', N'TP.HCM', N'Pha chế', N'Nữ', 1),
-(N'Hoàng', N'Long', '0905678901', N'Bình Phước', N'Nhân viên kho', N'Nam', 1),
+(N'Nguyễn', N'An', '0901234567', N'TP.HCM', N'Admin', N'Nam', 1),
+(N'Trần', N'Nhi', '0902345678', N'Bình Dương', N'Quản lý', N'Nữ', 1),
+(N'Lê', N'Minh', '0903456789', N'Đồng Nai', N'Nhân viên kho', N'Nam', 1),
+(N'Phạm', N'Hà', '0904567890', N'TP.HCM', N'Kế toán', N'Nữ', 1),
+(N'Hoàng', N'Long', '0905678901', N'Bình Phước', N'Pha chế', N'Nam', 1),
 (N'Đặng', N'Thảo', '0906789012', N'Tây Ninh', N'Pha chế', N'Nữ', 1),
-(N'Võ', N'Khang', '0907890123', N'TP.HCM', N'Pha chế', N'Nam', 1),
-(N'Bùi', N'Lan', '0908901234', N'Bình Dương', N'Kế toán', N'Nữ', 1);
+(N'Võ', N'Khang', '0907890123', N'TP.HCM', N'Phục vụ', N'Nam', 1),
+(N'Bùi', N'Lan', '0908901234', N'Bình Dương', N'Phục vụ', N'Nữ', 1);
 
 INSERT INTO PhieuNhap (NgayNhap, MaNhanVien)
 VALUES
@@ -236,18 +250,47 @@ VALUES
 (5, 2, 10, 148000),   -- Arabica
 (5, 8, 5, 95000);     -- Syrup
 
-INSERT INTO VaiTro (TenVaiTro)
-VALUES 
-(N'Admin'),
-(N'Quản Lý'),
-(N'Nhân Viên'),
-(N'Thu Ngân');
+
 
 INSERT INTO TaiKhoan
 (TenDangNhap, MatKhau, TrangThai, MaNhanVien, MaVaiTro)
 VALUES
-('admin', '123', 1, 1, 1)
+('admin', '123', 1, 1, 1),
+('nhansu', '123', 1, 2, 2),
+('thukho', '123', 1, 3, 3),
+('ketoan', '123', 1, 4, 4)
 
+-- admin 
+INSERT INTO VaiTro_ChucNang (MaVaiTro, MaChucNang) VALUES 
+-- admin
+(1, 1), -- QuanLyKho
+(1, 2), -- NhapKho
+(1, 3), -- XuatKho
+(1, 4), -- PhanCongCa
+(1, 5), -- QuanLyNhanVien
+(1, 6), -- ThanhToanLuong
+(1, 7), -- XemThongKe
+-- quan ly
+(2, 1), -- QuanLyKho
+(2, 2), -- NhapKho
+(2, 3), -- XuatKho
+(2, 4), -- PhanCongCa
+(2, 5), -- QuanLyNhanVien
+(2, 7), -- XemThongKe
+-- thu kho
+(3, 1), -- QuanLyKho
+(3, 2), -- NhapKho
+(3, 3), -- XuatKho
+(3, 7), -- XemThongKe
+-- ke toan
+(4, 1), -- QuanLyKho
+(4, 2), -- NhapKho
+(4, 3), -- XuatKho
+(4, 6), -- ThanhToanLuong
+(4, 7); -- XemThongKe
+go
+
+------------------------------------------------------------------
 UPDATE pn
 SET TongTien = x.Tong
 FROM PhieuNhap pn
@@ -304,7 +347,7 @@ create table LichSuGiaoDichLuong(
 )
 go
 
-create or alter procedure sp_ChotBangLuongTheoThang
+create procedure sp_ChotBangLuongTheoThang
     @Thang int,
     @Nam int
 as
@@ -404,11 +447,7 @@ select * from CauHinhLuong
 
 --select * from CaLam
 
---insert into CaLam (GioBatDau, GioKetThuc)
---values
---    ('08:00:00', '12:00:00'),
---    ('13:00:00', '17:00:00'),
---    ('18:00:00', '22:00:00')
+
 
 
 -- ====================================================================
@@ -447,7 +486,9 @@ values
     ('2024-05-31', 55000000, N'Doanh thu tháng 5')
 go
 
-create or alter view vw_BaoCaoDoanhThuThang
+
+
+create view vw_BaoCaoDoanhThuThang
 as
 select
     year(NgayLap) as Nam,
@@ -500,3 +541,4 @@ go
 
 --delete from LichSuGiaoDichLuong
 --where MaBangLuong = 1
+

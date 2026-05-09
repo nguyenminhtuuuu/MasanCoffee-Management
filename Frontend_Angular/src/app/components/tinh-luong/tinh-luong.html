@@ -18,7 +18,10 @@
     <tbody>
       <tr *ngFor="let nv of danhSachLuong">
         <td>NV-0{{ nv.maNhanVien }}</td>
-        <td class="fw-bold">{{ nv.hoTenNhanVien }}</td>
+        <td class="text-start fw-bold">
+            {{ nv.hoTenNhanVien }}
+            <span *ngIf="!nv.trangThai" class="badge bg-danger ms-2">Đã nghỉ việc</span>
+          </td>
         <td>{{ nv.tongGioLam }}h</td>
         <td>{{ nv.heSoLuong }}</td>
         <td class="text-danger fw-bold">{{ nv.tongLuong | number }}đ</td>
