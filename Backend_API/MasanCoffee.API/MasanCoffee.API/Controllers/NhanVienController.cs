@@ -19,22 +19,29 @@ namespace MasanCoffee.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<NhanVien>>> GetNhanViens()
         {
-            return await _context.NhanVien.OrderByDescending(x => x.MaNhanVien).ToListAsync();
+            return await _context.NhanVien
+              .Where(x => x.TrangThai == true) 
+              .OrderByDescending(x => x.MaNhanVien)
+              .ToListAsync();
         }
 
         // API 2: Thêm một nhân viên mới
+        [HttpPost]
         [HttpPost]
         public async Task<ActionResult<NhanVien>> PostNhanVien(NhanVien nhanVien)
         {
             try
             {
+                
+                nhanVien.TrangThai = true;
+                nhanVien.MaNhanVien = 0;
                 _context.NhanVien.Add(nhanVien);
                 await _context.SaveChangesAsync();
-                return Ok(new { thongBao = "Thêm nhân viên thành công!" });
+                return Ok(nhanVien);
             }
             catch (Exception ex)
             {
-                return BadRequest(new { thongBao = "Lỗi: " + (ex.InnerException?.Message ?? ex.Message) });
+                return BadRequest(new { thongBao = "Lỗi hệ thống: " + (ex.InnerException?.Message ?? ex.Message) });
             }
         }
 
@@ -47,14 +54,15 @@ namespace MasanCoffee.API.Controllers
 
             try
             {
-                _context.NhanVien.Remove(nv);
+                nv.TrangThai = false;
+                _context.Entry(nv).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
-                return Ok(new { thongBao = "Đã xóa nhân viên thành công!" });
+
+                return Ok(new { thongBao = "Nhân viên đã nghỉ việc (Xóa mềm thành công)!" });
             }
             catch (Exception)
             {
-               
-                return BadRequest(new { thongBao = "Không thể xóa nhân viên này vì đã có lịch làm việc hoặc dữ liệu liên quan!" });
+                return BadRequest(new { thongBao = "Không thể xử lý yêu cầu!" });
             }
         }
 
@@ -62,32 +70,34 @@ namespace MasanCoffee.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNhanVien(int id, NhanVien nhanVien)
         {
-            
             if (id != nhanVien.MaNhanVien)
             {
                 return BadRequest(new { thongBao = "ID nhân viên không khớp!" });
             }
 
-            _context.Entry(nhanVien).State = EntityState.Modified;
+            var existingNv = await _context.NhanVien.FindAsync(id);
+            if (existingNv == null)
+            {
+                return NotFound(new { thongBao = "Không tìm thấy nhân viên!" });
+            }
+
+            existingNv.Ho = nhanVien.Ho;
+            existingNv.Ten = nhanVien.Ten;
+            existingNv.SoDienThoai = nhanVien.SoDienThoai;
+            existingNv.DiaChi = nhanVien.DiaChi;
+            existingNv.ChucVu = nhanVien.ChucVu;
+            existingNv.GioiTinh = nhanVien.GioiTinh;
+            existingNv.TrangThai = nhanVien.TrangThai;
 
             try
             {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.NhanVien.Any(e => e.MaNhanVien == id))
-                {
-                    return NotFound(new { thongBao = "Không tìm thấy nhân viên để cập nhật!" });
-                }
-                else { throw; }
+                return Ok(new { thongBao = "Cập nhật thông tin nhân viên thành công!" });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { thongBao = "Lỗi cập nhật: " + (ex.InnerException?.Message ?? ex.Message) });
+                return BadRequest(new { thongBao = "Lỗi khi lưu dữ liệu: " + (ex.InnerException?.Message ?? ex.Message) });
             }
-
-            return Ok(new { thongBao = "Cập nhật nhân viên thành công!" });
         }
     }
 }
