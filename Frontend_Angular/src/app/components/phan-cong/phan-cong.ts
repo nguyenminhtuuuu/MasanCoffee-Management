@@ -11,9 +11,9 @@ import { NhanSuService } from '../../services/nhan-su.service';
   templateUrl: './phan-cong.html',
   styleUrl: './phan-cong.css'
 })
-export class PhanCongComponent implements OnInit { 
+export class PhanCongComponent implements OnInit {
   danhSachNhanVien: any[] = [];
-  
+
   danhSachCa = [
     { maCa: 1, tenCa: 'Ca Sáng (08:00 - 12:00)', gioBatDau: '08:00:00', gioKetThuc: '12:00:00', soGioLam: 4 },
     { maCa: 2, tenCa: 'Ca Chiều (12:00 - 17:00)', gioBatDau: '12:00:00', gioKetThuc: '17:00:00', soGioLam: 5 },
@@ -29,7 +29,7 @@ export class PhanCongComponent implements OnInit {
   lichDaPhan: PhanCongCa[] = [];
   thongBao = '';
 
-  constructor(private nhanSuService: NhanSuService) {}
+  constructor(private nhanSuService: NhanSuService) { }
 
   ngOnInit() {
     // 1. Lấy danh sách nhân viên để đổ vào dropdown
@@ -54,7 +54,7 @@ export class PhanCongComponent implements OnInit {
     const ca = this.danhSachCa.find(c => c.maCa == this.caMoi.maCa);
 
     if (nv && ca && this.caMoi.ngayLam) {
-      
+
       // 2. Gom thành cục JSON hoàn chỉnh để gửi xuống Backend
       // Lưu ý: hoTenNhanVien giúp hiển thị lên UI ngay lập tức
       const phieuPhanCa: any = {
@@ -71,14 +71,18 @@ export class PhanCongComponent implements OnInit {
           // Thành công: Thông báo và tải lại danh sách từ SQL cho chuẩn
           alert('✅ ' + res.thongBao);
           this.thongBao = res.thongBao;
-          this.loadLichPhanCong(); 
-          
+          this.loadLichPhanCong();
+
           // Reset form sau khi thêm thành công
           this.caMoi = { ngayLam: '', maNhanVien: 0, maCa: 0 };
         },
         error: (err: any) => {
-          // Hứng lỗi "biTrungLich" (Conflict 409) từ Backend quăng về
-          this.thongBao = err.error?.thongBao || 'Lỗi không thể phân ca!';
+          if (err.status === 409 || err.status === 400) {
+            this.thongBao = err.error?.thongBao;
+          } else {
+            this.thongBao = 'Lỗi hệ thống, vui lòng thử lại sau!';
+          }
+
           alert('❌ ' + this.thongBao);
         }
       });
@@ -87,4 +91,20 @@ export class PhanCongComponent implements OnInit {
       this.thongBao = 'Vui lòng chọn đầy đủ Ngày, Nhân viên và Ca làm!';
     }
   }
+  xoaCa(id: number | undefined) {
+  if (id === undefined) return; // Nếu không có ID thì không làm gì cả
+  
+  const xacNhan = confirm('Bạn có chắc chắn muốn xóa ca làm này không?');
+  if (xacNhan) {
+    this.nhanSuService.xoaPhanCong(id).subscribe({
+      next: (res: any) => {
+        alert('✅ ' + res.thongBao);
+        this.loadLichPhanCong();
+      },
+      error: (err) => {
+        alert('❌ Lỗi: ' + err.error?.thongBao);
+      }
+    });
+  }
+}
 }
