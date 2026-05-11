@@ -2,7 +2,7 @@
 
 <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
   <h3 style="margin-top: 0;">Tạo Phân Công Mới</h3>
-  
+
   <p style="color: blue;"><strong>{{ thongBao }}</strong></p>
 
   <div style="margin-bottom: 10px;">
@@ -14,9 +14,12 @@
     <label>Nhân viên: </label>
     <select [(ngModel)]="caMoi.maNhanVien">
       <option value="0" disabled>-- Chọn Nhân viên --</option>
-      <option *ngFor="let nv of danhSachNhanVien" [value]="nv.maNhanVien">{{ nv.hoTen }}</option>
+      <option *ngFor="let nv of danhSachNhanVien" [value]="nv.maNhanVien">{{ nv.hoTen }}{{ nv.ho }} {{ nv.ten }}
+      </option>
     </select>
   </div>
+
+
 
   <div style="margin-bottom: 10px;">
     <label>Ca làm: </label>
@@ -26,26 +29,38 @@
     </select>
   </div>
 
-  <button (click)="xuLyPhanCa()" style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">
+  <button (click)="xuLyPhanCa()"
+    style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">
     ➕ Chốt Phân Ca
   </button>
 </div>
 
 <h3>Danh Sách Ca Đã Phân</h3>
 <table border="1" style="width: 100%; text-align: left; border-collapse: collapse;">
-  <tr style="background-color: #eee;">
-    <th>Ngày</th>
-    <th>Nhân Viên</th>
-    <th>Ca</th>
-    <th>Giờ Làm</th>
-    <th>Tổng Giờ</th>
-  </tr>
-  <tr *ngFor="let lich of lichDaPhan">
-    <td>{{ lich.ngayLam }}</td>
-    <td><strong>{{ lich.hoTenNhanVien }}</strong></td>
-    <td>Ca {{ lich.maCa }}</td>
-    <td>{{ lich.gioBatDau }} - {{ lich.gioKetThuc }}</td>
-    <td>{{ lich.soGioLam }} giờ</td>
-  </tr>
+  <thead>
+    <tr style="background-color: #eee;">
+      <th>Ngày</th>
+      <th>Nhân Viên</th>
+      <th>Ca</th>
+      <th>Giờ Làm</th>
+      <th>Tổng Giờ</th>
+      <th>Thao tác</th> </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let p of lichDaPhan">
+      <td>{{ p.ngayLam | date:'dd/MM/yyyy' }}</td>
+      <td><strong>{{ p.hoTenNhanVien }}</strong></td>
+      <td>Ca {{ p.maCa }}</td>
+      <td>{{ p.gioBatDau }} - {{ p.gioKetThuc }}</td>
+      <td>{{ p.soGioLam }} giờ</td>
+      <td>
+        <button class="btn btn-outline-danger btn-sm" (click)="xoaCa(p.maPhanCong!)">
+          Xóa
+        </button>
+      </td>
+    </tr> 
+  </tbody>
 </table>
+
+
 <p *ngIf="lichDaPhan.length === 0" style="color: gray;">Chưa có ca làm nào được phân.</p>
