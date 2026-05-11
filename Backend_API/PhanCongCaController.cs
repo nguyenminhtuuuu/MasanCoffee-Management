@@ -1,4 +1,4 @@
-﻿using MasanCoffee.API.Models;
+using MasanCoffee.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +15,7 @@ namespace MasanCoffee.API.Controllers
             _context = context;
         }
 
-       
+
         [HttpGet]
         public async Task<IActionResult> GetLichPhanCong()
         {
@@ -25,11 +25,16 @@ namespace MasanCoffee.API.Controllers
                     p.MaPhanCong,
                     p.NgayLam,
                     p.MaNhanVien,
-                    
+                   
                     hoTenNhanVien = p.NhanVien.Ho + " " + p.NhanVien.Ten,
                     p.MaCa,
+                   
+                    gioBatDau = p.MaCa == 1 ? "08:00:00" : (p.MaCa == 2 ? "12:00:00" : "17:00:00"),
+                    gioKetThuc = p.MaCa == 1 ? "12:00:00" : (p.MaCa == 2 ? "17:00:00" : "22:00:00"),
                     p.SoGioLam
-                }).ToListAsync();
+                })
+                .OrderByDescending(p => p.NgayLam)
+                .ToListAsync();
 
             return Ok(lich);
         }
@@ -39,7 +44,7 @@ namespace MasanCoffee.API.Controllers
         {
             try
             {
-          
+                
                 bool biTrungLich = await _context.PhanCongCa.AnyAsync(x =>
                     x.NgayLam.Date == pc.NgayLam.Date &&
                     x.MaNhanVien == pc.MaNhanVien &&
@@ -47,27 +52,27 @@ namespace MasanCoffee.API.Controllers
 
                 if (biTrungLich)
                 {
-                   
                     return Conflict(new { thongBao = "Nhân viên này đã được phân vào ca này trong ngày hôm nay rồi!" });
                 }
 
-                
                 var phanCongMoi = new PhanCongCa
                 {
-                    NgayLam = pc.NgayLam,
+                    NgayLam = pc.NgayLam.Date, 
                     MaNhanVien = pc.MaNhanVien,
                     MaCa = pc.MaCa,
-                    SoGioLam = pc.SoGioLam 
+                    SoGioLam = pc.SoGioLam
                 };
 
                 _context.PhanCongCa.Add(phanCongMoi);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); 
+
                 return Ok(new { thongBao = "Lưu lịch làm việc thành công!" });
             }
             catch (Exception ex)
             {
                 return BadRequest(new { thongBao = "Lỗi hệ thống: " + (ex.InnerException?.Message ?? ex.Message) });
             }
+
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePhanCong(int id)
