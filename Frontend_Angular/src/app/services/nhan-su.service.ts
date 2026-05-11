@@ -34,6 +34,9 @@ export class NhanSuService {
 luuPhanCong(data: any): Observable<any> {
   return this.http.post('https://localhost:7219/api/PhanCongCa', data);
 }
+xoaPhanCong(id: number) {
+  return this.http.delete(`https://localhost:7219/api/PhanCongCa/${id}`);
+}
 
 
 }
