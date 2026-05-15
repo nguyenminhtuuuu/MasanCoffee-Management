@@ -29,4 +29,16 @@ export class NhanSuService {
   choNghiViec(id: number): Observable<any> {
   return this.http.put(`${this.apiUrl}/${id}/nghi-viec`, {}); 
  }
+
+  getLichPhanCong(): Observable<any> {
+    return this.http.get('https://localhost:7219/api/PhanCongCa');
+  }
+
+  luuPhanCong(phieuPhanCa: any): Observable<any> {
+    return this.http.post('https://localhost:7219/api/PhanCongCa', phieuPhanCa);
+  }
+
+  xoaPhanCong(id: number): Observable<any> {
+    return this.http.delete(`https://localhost:7219/api/PhanCongCa/${id}`);
+  }
 }

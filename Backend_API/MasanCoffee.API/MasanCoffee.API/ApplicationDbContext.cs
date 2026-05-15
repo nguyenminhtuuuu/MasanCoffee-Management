@@ -54,6 +54,8 @@ namespace MasanCoffee.API
                 .WithMany()
                 .HasForeignKey(c => c.MaBangLuong)
                 .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<PhanCongCa>()
+                .ToTable("PhanCongCa", tb => tb.HasTrigger("trg_PhanCongCa_TinhGioLam"));
 
             modelBuilder.Entity<BaoCaoDoanhThuThang>()
                 .HasNoKey()

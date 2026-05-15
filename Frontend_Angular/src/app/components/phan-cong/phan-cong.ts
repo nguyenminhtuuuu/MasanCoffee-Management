@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PhanCongCa } from '../../models/phan-cong.model';
@@ -29,7 +29,10 @@ export class PhanCongComponent implements OnInit {
   lichDaPhan: PhanCongCa[] = [];
   thongBao = '';
 
-  constructor(private nhanSuService: NhanSuService) { }
+  constructor(
+    private nhanSuService: NhanSuService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
     // 1. Lấy danh sách nhân viên để đổ vào dropdown
@@ -45,6 +48,7 @@ export class PhanCongComponent implements OnInit {
   loadLichPhanCong() {
     this.nhanSuService.getLichPhanCong().subscribe((res: any) => {
       this.lichDaPhan = res;
+      this.cdr.detectChanges();
     });
   }
 
@@ -56,14 +60,14 @@ export class PhanCongComponent implements OnInit {
     if (nv && ca && this.caMoi.ngayLam) {
 
       // 2. Gom thành cục JSON hoàn chỉnh để gửi xuống Backend
-      // Lưu ý: hoTenNhanVien giúp hiển thị lên UI ngay lập tức
       const phieuPhanCa: any = {
         ngayLam: this.caMoi.ngayLam,
         maNhanVien: nv.maNhanVien,
         maCa: ca.maCa,
-        soGioLam: ca.soGioLam,
-        // Backend sẽ dùng NhanVien.Ho + Ten để trả về hoTenNhanVien
+        soGioLam: ca.soGioLam
       };
+
+      console.log('Dữ liệu gửi lên:', phieuPhanCa);
 
       // 3. GỌI API & BẮT LỖI NGHIỆP VỤ (Lưu vào SQL Server)
       this.nhanSuService.luuPhanCong(phieuPhanCa).subscribe({
@@ -77,18 +81,21 @@ export class PhanCongComponent implements OnInit {
           this.caMoi = { ngayLam: '', maNhanVien: 0, maCa: 0 };
         },
         error: (err: any) => {
+          console.error('Lỗi API:', err);
           if (err.status === 409 || err.status === 400) {
-            this.thongBao = err.error?.thongBao;
+            this.thongBao = err.error?.thongBao || err.error?.message;
           } else {
-            this.thongBao = 'Lỗi hệ thống, vui lòng thử lại sau!';
+            this.thongBao = 'Lỗi hệ thống: ' + (err.error?.message || err.statusText);
           }
 
           alert('❌ ' + this.thongBao);
+          this.cdr.detectChanges();
         }
       });
 
     } else {
       this.thongBao = 'Vui lòng chọn đầy đủ Ngày, Nhân viên và Ca làm!';
+      this.cdr.detectChanges();
     }
   }
   xoaCa(id: number | undefined) {
@@ -101,8 +108,9 @@ export class PhanCongComponent implements OnInit {
         alert('✅ ' + res.thongBao);
         this.loadLichPhanCong();
       },
-      error: (err) => {
+      error: (err: any) => {
         alert('❌ Lỗi: ' + err.error?.thongBao);
+        this.cdr.detectChanges();
       }
     });
   }

@@ -14,7 +14,8 @@
     <label>Nhân viên: </label>
     <select [(ngModel)]="caMoi.maNhanVien">
       <option value="0" disabled>-- Chọn Nhân viên --</option>
-      <option *ngFor="let nv of danhSachNhanVien" [value]="nv.maNhanVien">{{ nv.hoTen }}{{ nv.ho }} {{ nv.ten }}
+      <option *ngFor="let nv of danhSachNhanVien" [value]="nv.maNhanVien">
+        {{ nv.hoTen || (nv.ho + ' ' + nv.ten) }}
       </option>
     </select>
   </div>
