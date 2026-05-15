@@ -1,97 +1,203 @@
-import { Component, OnInit } from '@angular/core'; // Nhớ có OnInit
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
 
-// TODO: [BÀN GIAO - 1] Import Service
-// import { KhoService } from '../services/kho.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { ApiService } from '../../services/api';
 
 @Component({
   selector: 'app-xuat-kho',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule
+  ],
   templateUrl: './xuat-kho.html',
   styleUrl: './xuat-kho.css'
 })
-export class XuatKhoComponent implements OnInit {
-  
-  // TODO: [BÀN GIAO - 2] Gọi API lấy tồn kho (Method: GET)
-  // Backend cần cung cấp API lấy danh sách hàng và số lượng tồn KHO THỰC TẾ NGAY LÚC NÀY.
-  // khoHienTai: any[] = [];
-  
-  // Kho hàng giả lập hiện tại
-  khoHienTai = [
-    { maHang: 1, tenHang: 'Hạt Cà phê Arabica', soLuongTon: 50 },
-    { maHang: 2, tenHang: 'Sữa đặc Ngôi Sao', soLuongTon: 20 }
-  ];
 
-  // Dữ liệu người dùng đang nhập vào Form
+export class XuatKhoComponent
+implements OnInit {
+
+  // tồn kho
+  khoHienTai: any[] = [];
+
+  // form
   phieuXuat = {
-    maHang: 1,
-    soLuong: 0
+
+    maNhanVien: 0,
+
+    maHang: 0,
+
+    soLuong: 1
   };
 
   thongBaoLoi = '';
+
   thongBaoThanhCong = '';
 
-  // constructor(private khoService: KhoService) {}
+  constructor(
+
+    private apiService: ApiService,
+
+    private cdr: ChangeDetectorRef
+
+  ) {}
 
   ngOnInit() {
-    // Gọi API load kho hiện tại khi mở trang
+
+    this.loadDanhSachKho();
   }
 
-  // Nút bấm sẽ gọi hàm này
-  xuLyXuatKho() {
-    // Reset thông báo mỗi lần bấm nút
-    this.thongBaoLoi = '';
-    this.thongBaoThanhCong = '';
+  // load kho
+  loadDanhSachKho() {
 
-    const hang = this.khoHienTai.find(h => h.maHang == this.phieuXuat.maHang);
+    this.apiService
+      .layDanhSachKho()
+      .subscribe({
 
-    // TODO: [BÀN GIAO - 3] CẢNH BÁO CHO THANH VY (BACKEND/DATA) - RACE CONDITION
-    // Ghi chú: Frontend ĐÃ check tồn kho tạm thời báo lỗi mượt mà cho user (code bên dưới).
-    // NHƯNG, Backend KHÔNG ĐƯỢC TIN Frontend 100%. 
-    // Giả sử Kho còn 20. Nhân viên A và Nhân viên B ở 2 máy tính khác nhau cùng mở trang này, cùng thấy tồn kho là 20.
-    // Cả 2 cùng gõ số lượng 15 và bấm Xuất Kho cùng 1 mili-giây. Code Frontend của cả 2 máy đều thấy 15 < 20 nên cho qua.
-    // Nếu Backend không check lại và dùng Transaction (Khóa dòng - Row Lock) hoặc Constraint (CHECK soLuong >= 0) trong SQL Server, kho sẽ bị âm thành -10.
-    
-    try {
-      // Check Validation phía Frontend (UX)
-      if (!hang) {
-        throw new Error("Vui lòng chọn một mặt hàng!");
-      }
-      if (this.phieuXuat.soLuong <= 0) {
-        throw new Error("Số lượng xuất phải lớn hơn 0!");
-      }
-      // BẮT ĐẦU VÙNG NGUY HIỂM: Giả lập SQL của Thanh Vy kiểm tra
-      if (hang && this.phieuXuat.soLuong > hang.soLuongTon) {
-        // Chủ động ném ra một cái lỗi y hệt như RAISERROR trong SQL Server
-        throw new Error("Kho không đủ hàng! Bạn đang xuất âm kho."); 
-      }
+        next: (res: any) => {
 
-      // TODO: [BÀN GIAO - 4] Gọi API Xuất Kho (Method: POST)
-      /* LUỒNG API THẬT SỰ
-      this.khoService.taoPhieuXuat(this.phieuXuat).subscribe({
-        next: (res) => {
-           this.thongBaoThanhCong = `Xuất kho thành công ${this.phieuXuat.soLuong} ${hang?.tenHang}!`;
-           // Thành công thì phải gọi API lấy lại số tồn kho mới nhất để update giao diện
-           // this.loadLaiKho(); 
+          console.log(
+            'Danh sach ton kho:',
+            res
+          );
+
+          this.khoHienTai = [
+            ...res.data
+          ];
+
+          this.cdr.detectChanges();
         },
-        error: (err) => {
-           // Hứng lỗi RAISERROR từ SQL Server do Thanh Vy quăng lên (ví dụ: HTTP 400 - Hết hàng)
-           this.thongBaoLoi = err.error.message;
+
+        error: (err: any) => {
+
+          console.error(err);
+
+          alert(
+            'Không lấy được danh sách kho'
+          );
         }
       });
-      */
+  }
 
-      // --- CODE CHẠY TẠM (Sẽ bỏ khi có API) ---
-      // Trừ ảo trên giao diện để test
-      hang.soLuongTon -= this.phieuXuat.soLuong; 
-      this.thongBaoThanhCong = `Xuất kho thành công ${this.phieuXuat.soLuong} ${hang?.tenHang}! Tồn kho còn lại: ${hang.soLuongTon}`;
-      // ---------------------------------------
+  // xuất kho
+  xuLyXuatKho() {
 
-    } catch (error: any) {
-      // HỨNG LỖI TỪ FRONTEND TỰ TẠO
-      this.thongBaoLoi = error.message;
+    this.thongBaoLoi = '';
+
+    this.thongBaoThanhCong = '';
+
+    const hang = this.khoHienTai.find(
+      h => h.maHang == this.phieuXuat.maHang
+    );
+
+    try {
+
+      if (!hang) {
+
+        throw new Error(
+          'Vui lòng chọn hàng'
+        );
+      }
+
+      if (this.phieuXuat.maNhanVien <= 0) {
+
+        throw new Error(
+          'Mã nhân viên không hợp lệ'
+        );
+      }
+
+      if (this.phieuXuat.soLuong <= 0) {
+
+        throw new Error(
+          'Số lượng phải lớn hơn 0'
+        );
+      }
+
+      if (
+        this.phieuXuat.soLuong >
+        hang.soLuongTon
+      ) {
+
+        throw new Error(
+          'Kho không đủ hàng'
+        );
+      }
+
+      // DTO ĐÚNG FORMAT BACKEND
+      const dataGui = {
+
+        maNhanVien:
+          this.phieuXuat.maNhanVien,
+
+        chiTietXuat: [
+
+          {
+            maHang:
+              this.phieuXuat.maHang,
+
+            soLuong:
+              this.phieuXuat.soLuong
+          }
+        ]
+      };
+
+      console.log(
+        'JSON gui backend:',
+        dataGui
+      );
+
+      this.apiService
+        .taoPhieuXuat(dataGui)
+        .subscribe({
+
+          next: (res: any) => {
+
+            console.log(
+              'Backend tra ve:',
+              res
+            );
+
+            if (res.success) {
+
+              this.thongBaoThanhCong =
+                `Xuất kho thành công! Mã phiếu: ${res.maPhieuXuat}`;
+
+              // LOAD LẠI KHO
+              this.loadDanhSachKho();
+
+              // reset form
+              this.phieuXuat.maHang = 0;
+
+              this.phieuXuat.soLuong = 1;
+            }
+            else {
+
+              this.thongBaoLoi =
+                res.message;
+            }
+          },
+
+          error: (err: any) => {
+
+            console.error(err);
+
+            this.thongBaoLoi =
+              err.error?.message ??
+              'Lỗi xuất kho';
+          }
+        });
+
+    }
+    catch (error: any) {
+
+      this.thongBaoLoi =
+        error.message;
     }
   }
 }

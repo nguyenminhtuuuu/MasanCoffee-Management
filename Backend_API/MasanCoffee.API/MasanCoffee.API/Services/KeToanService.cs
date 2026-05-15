@@ -21,6 +21,7 @@ namespace MasanCoffee.API.Services
             var thangNam = new DateOnly(nam, thang, 1);
 
             var danhSachLuong = await _context.BangLuong
+                .Include(bl => bl.NhanVien)
                 .Where(bl => bl.ThangNam == thangNam)
                 .Join(
                     _context.NhanVien,
@@ -36,7 +37,8 @@ namespace MasanCoffee.API.Services
                         TongGioLam = bl.TongGioLam,
                         HeSoLuong = bl.HeSoLuong,
                         TongLuong = bl.TongLuong,
-                        DaThanhToan = bl.DaThanhToan
+                        DaThanhToan = bl.DaThanhToan,
+                        TrangThai = bl.NhanVien.TrangThai
                     }
                 )
                 .OrderBy(x => x.MaNhanVien)

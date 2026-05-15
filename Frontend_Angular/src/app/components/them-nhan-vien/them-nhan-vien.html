@@ -19,16 +19,28 @@
         </tr>
       </thead>
       <tbody class="border-top-0">
-        <tr *ngFor="let nv of danhSachNhanVien">
+        <tr *ngFor="let nv of danhSachNhanVien" [class.opacity-50]="!nv.trangThai" [class.bg-light]="!nv.trangThai">
           <td class="fw-medium text-muted">NV-0{{ nv.maNhanVien }}</td>
-          <td class="text-start fw-bold">{{ nv.ho }} {{ nv.ten }}</td>
+          
+          <td class="text-start fw-bold">
+            {{ nv.ho }} {{ nv.ten }}
+            <span *ngIf="!nv.trangThai" class="badge bg-danger ms-2">Đã nghỉ việc</span>
+          </td>
+          
           <td>{{ nv.soDienThoai }}</td>
           <td><span class="badge bg-info text-dark rounded-pill">{{ nv.chucVu }}</span></td>
           <td>{{ nv.gioiTinh }}</td>
           
           <td *ngIf="kiemTraQuyen('QuanLyNhanVien')">
-            <button class="btn btn-sm btn-outline-warning me-2" (click)="moFormSua(nv)">Sửa</button>
-            <button class="btn btn-sm btn-outline-danger" (click)="xoaNhanVien(nv.maNhanVien)">Xóa</button>
+            <button class="btn btn-sm btn-outline-warning me-2" 
+                    [disabled]="!nv.trangThai" 
+                    (click)="moFormSua(nv)">
+              Cập nhật
+            </button>
+            
+            <button *ngIf="nv.trangThai" class="btn btn-sm btn-outline-secondary" (click)="choNghiViec(nv.maNhanVien)">
+              Cho nghỉ
+            </button>
           </td>
         </tr>
       </tbody>
@@ -62,12 +74,9 @@
       <div class="col-md-6">
         <label class="form-label fw-bold">Chức vụ:</label>
         <select class="form-select" [(ngModel)]="nhanVienHienTai.chucVu">
-          <option value="Sếp Tổng">Sếp Tổng</option>
-          <option value="Quản lý">Quản lý</option>
-          <option value="Thủ kho">Thủ kho</option>
-          <option value="Nhân sự">Nhân sự</option>
-          <option value="Kế toán">Kế toán</option>
-          <option value="Nhân viên">Nhân viên</option>
+          <option *ngFor="let vt of danhSachVaiTro" [value]="vt.tenVaiTro">
+            {{ vt.tenVaiTro }}
+          </option>
         </select>
       </div>
     </div>

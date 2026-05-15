@@ -8,4 +8,5 @@ export interface BangLuong {
   heSoLuong: number;
   tongLuong: number;
   daThanhToan: boolean;
+  trangThai: boolean;
 }

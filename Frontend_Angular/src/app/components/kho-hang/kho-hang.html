@@ -23,15 +23,15 @@
         
         <td class="text-start fw-bold">{{ hang.tenHang }}</td>
         
-        <td [ngClass]="{'text-danger fw-bold fs-5': hang.soLuongTon < 10, 'fw-medium': hang.soLuongTon >= 10}">
+        <td [ngClass]="{'text-danger fw-bold fs-5': hang.soLuongTon < hang.mucToiThieu, 'fw-medium': hang.soLuongTon >= hang.mucToiThieu}">
           {{ hang.soLuongTon }}
         </td>
         
         <td>{{ hang.donViTinh }}</td>
         
         <td>
-          <span class="badge bg-danger rounded-pill px-3 py-2" *ngIf="hang.soLuongTon < 10">Sắp hết hàng</span>
-          <span class="badge bg-success rounded-pill px-3 py-2" *ngIf="hang.soLuongTon >= 10">Ổn định</span>
+          <span class="badge bg-danger rounded-pill px-3 py-2" *ngIf="hang.soLuongTon < hang.mucToiThieu">Sắp hết hàng</span>
+          <span class="badge bg-success rounded-pill px-3 py-2" *ngIf="hang.soLuongTon >= hang.mucToiThieu">Ổn định</span>
         </td>
       </tr>
     </tbody>

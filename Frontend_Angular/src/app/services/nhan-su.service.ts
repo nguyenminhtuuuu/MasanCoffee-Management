@@ -1,42 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { NhanVien } from '../models/nhan-vien.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NhanSuService {
-
-  private apiUrl = 'https://localhost:7219/api/NhanVien';
+  private apiUrl = 'https://localhost:7219/api/NhanVien'; 
 
   constructor(private http: HttpClient) { }
 
-  getDanhSachNhanVien(): Observable<NhanVien[]> {
-    return this.http.get<NhanVien[]>(this.apiUrl);
-  }
-
-  getLichPhanCong(): Observable<any[]> {
-    return this.http.get<any[]>('https://localhost:7219/api/PhanCongCa');
-  }
-  themNhanVien(nv: any): Observable<any> {
-    return this.http.post('https://localhost:7219/api/NhanVien', nv);
-  }
-
-  capNhatNhanVien(id: any, data: any): Observable<any> {
-    return this.http.put(`https://localhost:7219/api/NhanVien/${id}`, data);
-  }
-
-  xoaNhanVien(id: any): Observable<any> {
-    return this.http.delete(`https://localhost:7219/api/NhanVien/${id}`);
+  getDanhSachNhanVien(): Observable<any> {
+    return this.http.get(this.apiUrl);
   }
   
-luuPhanCong(data: any): Observable<any> {
-  return this.http.post('https://localhost:7219/api/PhanCongCa', data);
-}
-xoaPhanCong(id: number) {
-  return this.http.delete(`https://localhost:7219/api/PhanCongCa/${id}`);
-}
+  getDanhSachVaiTro(): Observable<any> {
+    return this.http.get('https://localhost:7219/api/VaiTro'); 
+ }
 
+  themNhanVien(nhanVien: any): Observable<any> {
+    return this.http.post(this.apiUrl, nhanVien);
+  }
 
+  suaNhanVien(id: number, nhanVien: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, nhanVien);
+  }
+
+  choNghiViec(id: number): Observable<any> {
+  return this.http.put(`${this.apiUrl}/${id}/nghi-viec`, {}); 
+ }
 }

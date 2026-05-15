@@ -29,6 +29,8 @@ namespace MasanCoffee.API
         public DbSet<ChucNang> ChucNang { get; set; }
         public DbSet<VaiTro_ChucNang> VaiTro_ChucNang { get; set; }
 
+        public DbSet<PhanCongCa> PhanCongCa { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ChiTietPhieuNhap>()

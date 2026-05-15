@@ -11,5 +11,6 @@ namespace MasanCoffee.API.DTOs
         public decimal HeSoLuong { get; set; }
         public decimal TongLuong { get; set; }
         public bool DaThanhToan { get; set; }
+        public bool TrangThai { get; set; }
     }
 }
