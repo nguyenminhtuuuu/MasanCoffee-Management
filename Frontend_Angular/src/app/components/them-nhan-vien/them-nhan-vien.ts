@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NhanVien } from '../../models/nhan-vien.model';
-import { NhanSuService } from '../../services/nhan-su.service'; // ĐÃ IMPORT SERVICE
+import { NhanSuService } from '../../services/nhan-su.service'; 
 
 @Component({
   selector: 'app-them-nhan-vien',
@@ -52,7 +52,6 @@ export class ThemNhanVienComponent implements OnInit {
   kiemTraQuyen(quyenCanCheck: string): boolean {
     const chuoiQuyen = localStorage.getItem('quyenTruyCap');
     if (!chuoiQuyen) return false;
-    // Nhớ cấu hình C# nhả ra quyền 'Admin' hoặc 'QuanLyNhanVien' nhé
     const mangQuyen = JSON.parse(chuoiQuyen);
     return mangQuyen.includes('Admin') || mangQuyen.includes(quyenCanCheck);
   }
