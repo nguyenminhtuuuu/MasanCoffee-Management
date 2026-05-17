@@ -19,7 +19,7 @@ Hệ thống được thiết kế để số hóa quy trình quản lý tại c
 2. **Backend** : .NET Core (C#), Visual Studio
 3. **Frontend** : Angular, Visual Studio Code
 4. **Runtime** : Node.js 
-5. **Báo cáo** : [LaTeX (Overleaf)](https://www.overleaf.com/2898762932bqmgjsrtjgxd#aabc9a)
+5. **Báo cáo** : [Prism](https://prism.openai.com/?u=fd8659eb-fa04-45ae-a309-709d8377a61e&pg=1&m=HCMCOU+Final+Report+Template.tex)
 
 ---
 
