@@ -24,16 +24,15 @@ export class DangNhapComponent {
       next: (res: any) => {
         const duLieu = res.duLieu; 
         
-        // LocalStorage
-        localStorage.setItem('token', duLieu.token);
-        localStorage.setItem('quyenTruyCap', JSON.stringify(duLieu.quyenTruyCap));
+        // Persist token, permissions and user name, and notify app state
+        this.authService.setToken(duLieu.token);
+        this.authService.setQuyen(duLieu.quyenTruyCap);
         localStorage.setItem('tenNguoiDung', duLieu.thongTinUser.hoTen);
-        
-        alert(res.thongBao); 
 
-        this.router.navigate(['/trang-chu']).then(() => {
-           window.location.reload(); 
-        }); 
+        alert(res.thongBao);
+
+        // Navigate to a default authenticated page; Menu subscribes to auth observables so UI updates immediately
+        this.router.navigate(['/thong-ke']);
       },
       error: (err) => {
         

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Phải có cái này mới xài được phép tàng hình *ngIf
 import { RouterModule, Router } from '@angular/router'; // Phải có cái này mới xài được thẻ <a routerLink="..."> để chuyển trang mà không bị load lại cả trang
+import { AuthService } from '../../services/auth.service';
 
 // TODO: [BÀN GIAO - 1] Import Service quản lý Authentication
 // Tương tự bên trang đăng nhập, sau này sẽ cần gọi Service vào đây để xử lý logic lấy thông tin và đăng xuất.
@@ -17,9 +18,10 @@ import { RouterModule, Router } from '@angular/router'; // Phải có cái này 
 export class MenuComponent implements OnInit {
   // TODO: [BÀN GIAO - 2] Tiêm (Inject) Service vào đây
   // constructor(private router: Router, private authService: AuthService) { }
-  constructor(private router: Router) { } // Gọi xe ôm Router
+  constructor(private router: Router, private authService: AuthService) { } // Gọi xe ôm Router
 
   danhSachQuyen: string[] = [];
+  isLoggedIn = false;
 
   // Hàm này tự động chạy khi Menu vừa được vẽ ra màn hình
   ngOnInit() {
@@ -29,12 +31,14 @@ export class MenuComponent implements OnInit {
     // Backend nên nén quyền vào trong mã JWT Token, hoặc Frontend sẽ gọi 1 API (vd: GET /api/me) để lấy quyền mới nhất mỗi khi load lại trang.
     
     // Xuống kho lấy cái mảng quyền đã lưu lúc đăng nhập lên
-    const quyenLuuTru = localStorage.getItem('quyenTruyCap');
-    
-    if (quyenLuuTru) {
-      // Vì lúc lưu mình ép nó thành chuỗi (String), giờ lấy ra phải xài JSON.parse để biến nó lại thành cái Mảng (Array)
-      this.danhSachQuyen = JSON.parse(quyenLuuTru);
-    }
+    // Subscribe to permission and login changes so Menu updates immediately after login/logout
+    this.authService.quyen$.subscribe(q => {
+      this.danhSachQuyen = q || [];
+    });
+
+    this.authService.isLoggedIn$.subscribe(v => {
+      this.isLoggedIn = !!v;
+    });
   }
 
   // Viết 1 hàm nhỏ để đi soi quyền
@@ -73,6 +77,9 @@ export class MenuComponent implements OnInit {
     localStorage.removeItem('token'); // Tịch thu thẻ từ
     localStorage.removeItem('quyenTruyCap'); // Tịch thu quyền
     localStorage.removeItem('tenNguoiDung'); // Tịch thu cái tên
+    // Notify app that permissions cleared so UI updates without reload
+    this.authService.setQuyen([]);
+    this.authService.setToken(null);
     this.router.navigate(['/']); // Chở về trang Đăng nhập
     // --- KẾT THÚC ĐOẠN CODE TẠM ---
   }

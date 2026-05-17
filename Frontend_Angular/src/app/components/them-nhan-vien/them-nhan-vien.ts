@@ -49,6 +49,10 @@ export class ThemNhanVienComponent implements OnInit {
     });
   }
 
+  layThongBao(res: any, macDinh: string): string {
+    return res?.thongBao || res?.message || res?.moTa || macDinh;
+  }
+
   kiemTraQuyen(quyenCanCheck: string): boolean {
     const chuoiQuyen = localStorage.getItem('quyenTruyCap');
     if (!chuoiQuyen) return false;
@@ -72,7 +76,7 @@ export class ThemNhanVienComponent implements OnInit {
     if (maNV && confirm('Xác nhận cho nhân viên này nghỉ việc?')) {
       this.nhanSuService.choNghiViec(maNV).subscribe({
         next: (res) => {
-          alert(res.thongBao); 
+          alert(this.layThongBao(res, 'Cập nhật trạng thái nhân viên thành công!')); 
           this.loadDanhSach();
         },
         error: (err) => {
@@ -86,7 +90,7 @@ export class ThemNhanVienComponent implements OnInit {
     if (this.dangSua) {
       this.nhanSuService.suaNhanVien(this.nhanVienHienTai.maNhanVien!, this.nhanVienHienTai).subscribe({
         next: (res) => {
-          alert(res.thongBao);
+          alert(this.layThongBao(res, 'Cập nhật nhân viên thành công!'));
           this.hienThiForm = false;
           this.loadDanhSach(); 
         },
@@ -95,7 +99,7 @@ export class ThemNhanVienComponent implements OnInit {
     } else {
       this.nhanSuService.themNhanVien(this.nhanVienHienTai).subscribe({
         next: (res) => {
-          alert(res.thongBao);
+          alert(this.layThongBao(res, 'Thêm nhân viên thành công!'));
           this.hienThiForm = false;
           this.loadDanhSach();
         },

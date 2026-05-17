@@ -7,6 +7,7 @@ import { XuatKhoComponent } from './components/xuat-kho/xuat-kho';
 import { PhanCongComponent } from './components/phan-cong/phan-cong';
 import { TinhLuongComponent } from './components/tinh-luong/tinh-luong';
 import { NhapKhoComponent } from './components/nhap-kho/nhap-kho';
+import { QuanTriTaiKhoanComponent } from './components/quan-tri-tai-khoan/quan-tri-tai-khoan';
 import { kiemTraQuyenGuard } from './guards/kiem-tra-quyen-guard';
 
 
@@ -49,6 +50,12 @@ export const routes: Routes = [
     component: TinhLuongComponent,
     canActivate: [kiemTraQuyenGuard],
     data: { quyenCanThiet: 'ThanhToanLuong' }
+  },
+  {
+    path: 'tai-khoan',
+    component: QuanTriTaiKhoanComponent,
+    canActivate: [kiemTraQuyenGuard],
+    data: { quyenCanThiet: 'QuanTriTaiKhoan' }
   },
   // Riêng trang Thống Kê lỡ Minh Tú không phân quyền cụ thể thì tui khỏi để `data`, chỉ cần `canActivate` là ông bảo vệ hiểu "Ai đăng nhập rồi cũng được coi"
   { 

@@ -1,0 +1,179 @@
+.admin-shell {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.admin-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+  color: #fff;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  opacity: 0.75;
+}
+
+.admin-hero h2,
+.panel h3 {
+  margin: 0;
+}
+
+.lead {
+  margin: 0.6rem 0 0;
+  max-width: 52rem;
+  opacity: 0.9;
+}
+
+.btn-create,
+.btn-primary,
+.btn-secondary,
+.btn-toggle {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-create,
+.btn-primary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-toggle {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.alert-box {
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.account-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.account-form label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.account-form span {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.account-form input,
+.account-form select {
+  width: 100%;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  outline: none;
+}
+
+.account-form input:focus,
+.account-form select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.9rem 0.8rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+  color: #475569;
+  font-size: 0.92rem;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  font-weight: 700;
+}
+
+.status-pill.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pill.locked {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.denied-box {
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .admin-hero,
+  .panel-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .account-form {
+    grid-template-columns: 1fr;
+  }
+}

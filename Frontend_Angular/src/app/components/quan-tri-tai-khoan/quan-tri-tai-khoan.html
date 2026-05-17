@@ -1,0 +1,103 @@
+<section class="admin-shell">
+  @if (coQuyenQuanTriTaiKhoan()) {
+    <div class="admin-hero">
+      <div>
+        <p class="eyebrow">Chào Admin!</p>
+        <h2>Quản trị tài khoản</h2>
+      </div>
+      <button class="btn-create" type="button" (click)="moForm()">+ Cấp tài khoản</button>
+    </div>
+
+    @if (thongBao()) {
+      <div class="alert-box">{{ thongBao() }}</div>
+    }
+
+    @if (hienThiForm()) {
+      <div class="panel form-panel">
+        <h3>Cấp tài khoản mới</h3>
+
+        <form [formGroup]="form" class="account-form" (ngSubmit)="luuTaiKhoan()">
+          <label>
+            <span>Tên đăng nhập</span>
+            <input type="text" formControlName="tenDangNhap" placeholder="VD: minh.tu" />
+          </label>
+
+          <label>
+            <span>Mật khẩu</span>
+            <input type="password" formControlName="matKhau" placeholder="Tối thiểu 6 ký tự" />
+          </label>
+
+          <label>
+            <span>Nhân viên</span>
+            <select formControlName="maNhanVien">
+              <option [ngValue]="0">-- Chọn nhân viên --</option>
+              @for (nv of danhSachNhanVien(); track $index) {
+                <option [ngValue]="nv.maNhanVien">NV-0{{ nv.maNhanVien }} - {{ nv.ho }} {{ nv.ten }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            <span>Vai trò</span>
+            <select formControlName="maVaiTro">
+              <option [ngValue]="0">-- Chọn vai trò --</option>
+              @for (vaiTro of danhSachVaiTro(); track $index) {
+                <option [ngValue]="vaiTro.maVaiTro">{{ vaiTro.tenVaiTro }}</option>
+              }
+            </select>
+          </label>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" (click)="dongForm()">Hủy</button>
+            <button type="submit" class="btn-primary" [disabled]="dangTai()">{{ dangTai() ? 'Đang lưu...' : 'Lưu tài khoản' }}</button>
+          </div>
+        </form>
+      </div>
+    }
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Danh sách tài khoản</h3>
+        <span>{{ danhSachTaiKhoan().length }} tài khoản</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tên đăng nhập</th>
+              <th>Nhân viên</th>
+              <th>Vai trò</th>
+              <th>Trạng thái</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (taiKhoan of danhSachTaiKhoan(); track taiKhoan.tenDangNhap) {
+              <tr>
+                <td>{{ taiKhoan.tenDangNhap }}</td>
+                <td>{{ taiKhoan.hoTenNhanVien }}</td>
+                <td>{{ taiKhoan.vaiTro }}</td>
+                <td>
+                  <span class="status-pill" [class.active]="taiKhoan.trangThai" [class.locked]="!taiKhoan.trangThai">
+                    {{ taiKhoan.trangThai ? 'Đang hoạt động' : 'Đã khóa' }}
+                  </span>
+                </td>
+                <td>
+                  <button type="button" class="btn-toggle" (click)="doiTrangThai(taiKhoan.tenDangNhap)">
+                    {{ taiKhoan.trangThai ? 'Khóa' : 'Mở khóa' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  } @else {
+    <div class="panel denied-box">
+      <h3>Không có quyền truy cập</h3>
+      <p>Giao diện này chỉ dành cho tài khoản Admin.</p>
+    </div>
+  }
+</section>

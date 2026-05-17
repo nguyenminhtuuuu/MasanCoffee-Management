@@ -28,7 +28,10 @@ VALUES
 (N'Admin'),
 (N'Quản lý'),
 (N'Nhân viên kho'),
-(N'Kế toán');
+(N'Kế toán'),
+(N'Pha chế'),
+(N'Phục vụ'),
+(N'Bảo vệ');
 
 -- bang TaiKhoan
 create table TaiKhoan(
@@ -52,7 +55,8 @@ INSERT INTO ChucNang (TenChucNang) VALUES
 ('PhanCongCa'),
 ('QuanLyNhanVien'),
 ('ThanhToanLuong'),
-('XemThongKe');
+('XemThongKe'),
+('QuanTriTaiKhoan');
 --bang NguyenLieu
 create table NguyenLieu(
 	MaHang int identity(1,1) primary key
@@ -212,7 +216,7 @@ VALUES
 (N'Phạm', N'Hà', '0904567890', N'TP.HCM', N'Kế toán', N'Nữ', 1),
 (N'Hoàng', N'Long', '0905678901', N'Bình Phước', N'Pha chế', N'Nam', 1),
 (N'Đặng', N'Thảo', '0906789012', N'Tây Ninh', N'Pha chế', N'Nữ', 1),
-(N'Võ', N'Khang', '0907890123', N'TP.HCM', N'Phục vụ', N'Nam', 1),
+(N'Võ', N'Khang', '0907890123', N'TP.HCM', N'Bảo vệ', N'Nam', 1),
 (N'Bùi', N'Lan', '0908901234', N'Bình Dương', N'Phục vụ', N'Nữ', 1);
 
 INSERT INTO PhieuNhap (NgayNhap, MaNhanVien)
@@ -259,7 +263,6 @@ VALUES
 ('nhansu', '123', 1, 2, 2),
 ('thukho', '123', 1, 3, 3),
 ('ketoan', '123', 1, 4, 4)
-
 -- admin 
 INSERT INTO VaiTro_ChucNang (MaVaiTro, MaChucNang) VALUES 
 -- admin
@@ -270,6 +273,7 @@ INSERT INTO VaiTro_ChucNang (MaVaiTro, MaChucNang) VALUES
 (1, 5), -- QuanLyNhanVien
 (1, 6), -- ThanhToanLuong
 (1, 7), -- XemThongKe
+(1, 8), -- QuanTriTaiKhoan
 -- quan ly
 (2, 1), -- QuanLyKho
 (2, 2), -- NhapKho

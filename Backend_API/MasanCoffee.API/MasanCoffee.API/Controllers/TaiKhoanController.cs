@@ -51,17 +51,30 @@ namespace MasanCoffee.API.Controllers
 
         // them tai khoan 
         [HttpPost]
-        public IActionResult ThemTaiKhoan([FromBody] TaiKhoan request)
+        public async Task<IActionResult> TaoTaiKhoan([FromBody] TaoTaiKhoanDto request)
         {
-            var exists = _context.TaiKhoan.Any(t => t.MaNhanVien == request.MaNhanVien || t.TenDangNhap == request.TenDangNhap);
-            if (exists)
-                return BadRequest(new { message = "Nhân viên đã có tài khoản hoặc Tên đăng nhập bị trùng!" });
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            request.TrangThai = true; // tai khoan moi mac dinh la dang hoat dong
-            _context.TaiKhoan.Add(request);
-            _context.SaveChanges();
+            var nhanVien = await _context.NhanVien.FindAsync(request.MaNhanVien);
+            var vaiTro = await _context.VaiTro.FindAsync(request.MaVaiTro);
 
-            return Ok(new { message = "Cấp tài khoản thành công!" });
+            if (nhanVien == null || vaiTro == null)
+                return NotFound("Không tìm thấy Nhân viên hoặc Vai trò");
+
+            var taiKhoan = new TaiKhoan
+            {
+                TenDangNhap = request.TenDangNhap,
+                MatKhau = request.MatKhau,
+                TrangThai = request.TrangThai,
+                MaNhanVien = request.MaNhanVien,
+                MaVaiTro = request.MaVaiTro
+            };
+
+            _context.TaiKhoan.Add(taiKhoan);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }
