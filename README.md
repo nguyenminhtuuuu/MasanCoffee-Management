@@ -4,14 +4,6 @@
 
 ## Giới thiệu đề tài
 Hệ thống được thiết kế để số hóa quy trình quản lý tại cửa hàng cà phê Masan, tập trung vào việc quản lý nhân sự, tính lương tự động và kiểm soát kho nguyên liệu chặt chẽ thông qua các kỹ thuật lập trình cơ sở dữ liệu nâng cao.
-
-## 👥 Thành viên thực hiện
-1. **Nguyễn Minh Tú** - 2351010235 
-2. **Bùi Đức Quỳnh Anh** - 2351010005
-3. **Trần Đăng Khoa** - 2354050055
-4. **Trần Thanh Vy** - 2351010253
-5. **Phan Thị Yến Vy** - 2351010252
-
 ---
 
 ## Công nghệ sử dụng
